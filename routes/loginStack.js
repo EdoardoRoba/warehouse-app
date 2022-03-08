@@ -2,6 +2,8 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import Login from '../Components/Login'
 import QRScanner from '../Components/QRScanner'
+import Client from '../Components/Client'
+import Home from "../Components/Home";
 
 const screens = {
     Login: {
@@ -10,12 +12,24 @@ const screens = {
             title: "Login"
         }
     },
+    Home: {
+        screen: Home,
+        navigationOptions: {
+            title: "Home"
+        }
+    },
     QRScanner: {
         screen: QRScanner,
         navigationOptions: {
-            title: "Scannerizza il codice QR"
+            title: "QRScanner"
         }
     },
+    Client: {
+        screen: Client,
+        navigationOptions: {
+            title: "Clienti"
+        }
+    }
 }
 
 const HomeStack = createStackNavigator(screens, {

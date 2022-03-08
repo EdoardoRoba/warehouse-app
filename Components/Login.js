@@ -1,4 +1,4 @@
-import { axiosInstance } from "../config.js"
+import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Button, Alert, ActivityIndicator } from 'react-native';
@@ -60,15 +60,23 @@ export default function Login({ navigation }) {
 
     }, []);
 
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowError(false)
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [showError]);
+
     const login = () => {
         setIsLoading(true)
-        axiosInstance.post('https://my-warehouse-app-heroku.herokuapp.com/api/profile', { username: username, password: password })
+        const usr = username
+        axiosInstance.post(beUrl + 'profile', { username: username, password: password })
             .then(response => {
                 // setLoggedIn(true)
                 setIsLoading(false)
                 setUsername("")
                 setPassword("")
-                navigation.navigate("QRScanner", { data: "example" })
+                navigation.navigate("Home", { user: usr })
                 // setToken(response.data.token)
                 // console.log("loggato!", response.data)
                 // localStorage.setItem("token", response.data.token)

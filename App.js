@@ -1,4 +1,4 @@
-import { axiosInstance } from "./config.js"
+import { axiosInstance, beUrl } from "./config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Button, Alert, TextInput } from 'react-native';
@@ -86,7 +86,7 @@ export default function App() {
   }, [confermaUpdate]);
 
   React.useEffect(() => {
-    if (scanned && url.includes("https://my-warehouse-app-heroku.herokuapp.com/api/")) {
+    if (scanned && url.includes(beUrl)) {
       axiosInstance.get(url)
         .then(response => {
           // console.log("ciao", response.data)
@@ -97,7 +97,7 @@ export default function App() {
           setNotFound(true)
         });
     }
-    if (url !== "Nessun risultato" && !url.includes("https://my-warehouse-app-heroku.herokuapp.com/api/")) {
+    if (url !== "Nessun risultato" && !url.includes(beUrl)) {
       console.log("Tool not found")
       setNotFound(true)
     }

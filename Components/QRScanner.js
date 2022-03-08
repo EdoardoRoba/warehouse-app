@@ -1,4 +1,4 @@
-import { axiosInstance } from "../config.js"
+import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Button, Alert, ActivityIndicator } from 'react-native';
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         borderRadius: 30,
         backgroundColor: 'tomato',
-        marginTop: 10
+        marginTop: 20
     },
     input: {
         height: 40,
@@ -85,7 +85,7 @@ export default function QRScanner({ navigation }) {
     }, [confermaUpdate]);
 
     React.useEffect(() => {
-        if (scanned && url.includes("https://my-warehouse-app-heroku.herokuapp.com/api/")) {
+        if (scanned && url.includes(beUrl)) {
             setIsLoading(true)
             axiosInstance.get(url)
                 .then(response => {
@@ -99,7 +99,7 @@ export default function QRScanner({ navigation }) {
                     setNotFound(true)
                 });
         }
-        if (url !== "Nessun risultato" && !url.includes("https://my-warehouse-app-heroku.herokuapp.com/api/")) {
+        if (url !== "Nessun risultato" && !url.includes(beUrl)) {
             console.log("Tool not found")
             setNotFound(true)
             setIsLoading(false)
@@ -115,12 +115,11 @@ export default function QRScanner({ navigation }) {
 
     const updateBook = () => {
         var newField = {}
-        newField = { quantity: toolFound.quantity + diff }
+        newField = { quantity: toolFound.quantity + diff, lastUser: navigation.getParam("user").toLowerCase() }
         setIsLoading(true)
         axiosInstance.put(url, newField).then(ersp => {
             axiosInstance.put(url, newField).then(response => {
                 // console.log("Fatto!", response.data)
-                setIsLoading(false)
                 setConfermaUpdate(true)
                 setToolFound(response.data)
                 showMessage({
@@ -129,6 +128,15 @@ export default function QRScanner({ navigation }) {
                     backgroundColor: "green",
                     color: "white"
                 });
+                var upds = { user: navigation.getParam("user"), tool: toolFound.label, totalQuantity: toolFound.quantity + diff, update: diff }
+                axiosInstance.post(beUrl + 'history/' + toolFound.label, upds)
+                    .then(response => {
+                        console.log("History added!")
+                        setIsLoading(false)
+                    }).catch(error => {
+                        setShowError(true)
+                        setIsLoading(false)
+                    });
             }).catch((err) => {
                 setIsLoading(false)
                 console.log("err: ", err)
@@ -158,7 +166,7 @@ export default function QRScanner({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* <Text>{navigation.getParam("data")}</Text> */}
+            {/* <Text>Benvenuto {navigation.getParam("user")}!</Text> */}
             <FlashMessage position="top" />
             <SafeAreaView style={styles.barcodebox}>
                 <BarCodeScanner
