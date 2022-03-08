@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "myself",
-    "slug": "myself",
+    "name": "qr-scanner",
+    "slug": "qr-scanner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

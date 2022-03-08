@@ -6,6 +6,12 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 import NumericInput from 'react-native-numeric-input';
 import FlashMessage, { showMessage, hideMessage } from "react-native-flash-message";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Login from './Components/Login'
+import Navigator from './routes/loginStack'
+
+const Stack = createNativeStackNavigator();
 
 const styles = StyleSheet.create({
   container: {
@@ -145,40 +151,40 @@ export default function App() {
 
   // Return the SafeAreaView
   return (
-    <SafeAreaView style={styles.container}>
-      <FlashMessage position="top" />
-      <SafeAreaView style={styles.barcodebox}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={{ height: 400, width: 400 }} />
-      </SafeAreaView>
-      {/* <Text style={styles.maintext}>{url}</Text> */}
-
-      {scanned && <Button title={'Scannerizza nuovamente?'} onPress={() => setScanned(false)} color='tomato' />}
-      {
-        (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <View style={{ width: "80%" }}>
-          {toolFound.label === undefined ? null :
-            <SafeAreaView style={{ marginTop: 30, width: "100%" }}>
-              <Card>
-                <Card.Title title={toolFound.label.toUpperCase()} />
-                <Card.Content>
-                  <Title style={{ fontSize: 15 }}>quantità attuale</Title>
-                  <Paragraph style={{ fontSize: 12 }}>{toolFound.quantity}</Paragraph>
-                </Card.Content>
-              </Card>
-              <View style={{ flexDirection: "row", alignItems: 'center', marginTop: 10, marginLeft: 30, marginRight: 30, width: '100%' }}>
-                <Text style={{ flex: 1 }}>togli</Text>
-                <NumericInput style={{ flex: 2 }} onChange={value => setDiff(value)} />
-                <Text style={{ flex: 3, marginLeft: 5 }}>aggiungi</Text>
-              </View>
-              <Button title={'Aggiorna'} onPress={() => updateBook()} color='tomato' />
-            </SafeAreaView>
-          }
-        </View>
-      }
-      {
-        !showError ? null : <Alert style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }} severity="error">Errore. Controlla la connessione o i dati inseriti.</Alert>
-      }
+    // <SafeAreaView style={styles.container}>
+    <Navigator />
+    /* <FlashMessage position="top" />
+    <SafeAreaView style={styles.barcodebox}>
+      <BarCodeScanner
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        style={{ height: 400, width: 400 }} />
     </SafeAreaView>
+
+    {scanned && <Button title={'Scannerizza nuovamente?'} onPress={() => setScanned(false)} color='tomato' />}
+    {
+      (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <View style={{ width: "80%" }}>
+        {toolFound.label === undefined ? null :
+          <SafeAreaView style={{ marginTop: 30, width: "100%" }}>
+            <Card>
+              <Card.Title title={toolFound.label.toUpperCase()} />
+              <Card.Content>
+                <Title style={{ fontSize: 15 }}>quantità attuale</Title>
+                <Paragraph style={{ fontSize: 12 }}>{toolFound.quantity}</Paragraph>
+              </Card.Content>
+            </Card>
+            <View style={{ flexDirection: "row", alignItems: 'center', marginTop: 10, marginLeft: 30, marginRight: 30, width: '100%' }}>
+              <Text style={{ flex: 1 }}>togli</Text>
+              <NumericInput style={{ flex: 2 }} onChange={value => setDiff(value)} />
+              <Text style={{ flex: 3, marginLeft: 5 }}>aggiungi</Text>
+            </View>
+            <Button title={'Aggiorna'} onPress={() => updateBook()} color='tomato' />
+          </SafeAreaView>
+        }
+      </View>
+    }
+    {
+      !showError ? null : <Alert style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }} severity="error">Errore. Controlla la connessione o i dati inseriti.</Alert>
+    } */
+    // </SafeAreaView>
   );
 }
