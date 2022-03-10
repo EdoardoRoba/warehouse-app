@@ -4,6 +4,7 @@ import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
 import { Menu, Button, Provider, Dialog, Portal } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import ImageView from "react-native-image-viewing";
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
 export default function Client({ navigation }) {
 
     const [customers, setCustomers] = React.useState([]);
+    const [fotosToShow, setFotosToShow] = React.useState([]);
     const [customerSelected, setCustomerSelected] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(false);
     const [showError, setShowError] = React.useState(false);
@@ -57,6 +59,7 @@ export default function Client({ navigation }) {
     const [openSopralluogo, setOpenSopralluogo] = React.useState(false);
     const [openInstallazione, setOpenInstallazione] = React.useState(false);
     const [openAssistenza, setOpenAssistenza] = React.useState(false);
+    const [isVisible, setIsVisible] = React.useState(true);
 
     React.useEffect(() => {
         getCustomers();
@@ -97,6 +100,17 @@ export default function Client({ navigation }) {
         setCustomerSelected(c)
     }
 
+    const createImagesToShow = (fotos) => {
+        let ftss = []
+        let fts = {}
+        for (let f of fotos) {
+            fts = {}
+            fts.uri = f
+            ftss.push(fts)
+        }
+        setFotosToShow(ftss)
+    }
+
     return (
         <View style={styles.container}>
             {/* <Text style={{ marginTop: 10 }}>Welcome in client section!</Text> */}
@@ -122,9 +136,18 @@ export default function Client({ navigation }) {
             }
             {
                 customerSelected.nome_cognome === undefined ? null : <View>
-                    <Button onPress={() => { setOpenSopralluogo(true) }}>Apri foto sopralluogo</Button>
-                    <Button onPress={() => { setOpenInstallazione(true) }}>Apri foto di fine installazione</Button>
-                    <Button onPress={() => { setOpenAssistenza(true) }}>Apri foto di assistenza</Button>
+                    <Button onPress={() => {
+                        setOpenSopralluogo(true)
+                        createImagesToShow(customerSelected.foto_sopralluogo)
+                    }}>Apri foto sopralluogo</Button>
+                    <Button onPress={() => {
+                        setOpenInstallazione(true)
+                        createImagesToShow(customerSelected.foto_fine_installazione)
+                    }}>Apri foto di fine installazione</Button>
+                    <Button onPress={() => {
+                        setOpenAssistenza(true)
+                        createImagesToShow(customerSelected.foto_assistenza)
+                    }}>Apri foto di assistenza</Button>
                 </View>
             }
             {
@@ -144,17 +167,22 @@ export default function Client({ navigation }) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {
+                                            {/* {
                                                 customerSelected.foto_sopralluogo.map(s => {
                                                     return <View>
                                                         <Image
                                                             source={{ uri: s }}
                                                             style={{ height: 250, width: 300, marginTop: 3 }}
                                                         />
-                                                        {/* <Text>{s}</Text> */}
                                                     </View>
                                                 })
-                                            }
+                                            } */}
+                                            <ImageView
+                                                images={fotosToShow}
+                                                imageIndex={0}
+                                                visible={openSopralluogo}
+                                                onRequestClose={() => setOpenSopralluogo(false)}
+                                            />
                                         </View>
                                     }
                                 </ScrollView >
@@ -172,17 +200,22 @@ export default function Client({ navigation }) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {
+                                            {/* {
                                                 customerSelected.foto_fine_installazione.map(i => {
                                                     return <View>
                                                         <Image
                                                             source={{ uri: i }}
                                                             style={{ height: 250, width: 300, marginTop: 3 }}
                                                         />
-                                                        {/* <Text>{s}</Text> */}
                                                     </View>
                                                 })
-                                            }
+                                            } */}
+                                            <ImageView
+                                                images={fotosToShow}
+                                                imageIndex={0}
+                                                visible={openInstallazione}
+                                                onRequestClose={() => setOpenInstallazione(false)}
+                                            />
                                         </View>
                                     }
                                 </ScrollView>
@@ -199,17 +232,22 @@ export default function Client({ navigation }) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text style={{ justifyContent: 'center', alignItems: 'center' }}>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {
+                                            {/* {
                                                 customerSelected.foto_assistenza.map(a => {
                                                     return <View>
                                                         <Image
                                                             source={{ uri: a }}
                                                             style={{ height: 250, width: 300, marginTop: 3 }}
                                                         />
-                                                        {/* <Text>{s}</Text> */}
                                                     </View>
                                                 })
-                                            }
+                                            } */}
+                                            <ImageView
+                                                images={fotosToShow}
+                                                imageIndex={0}
+                                                visible={openAssistenza}
+                                                onRequestClose={() => setOpenAssistenza(false)}
+                                            />
                                         </View>
                                     }
                                 </ScrollView>
