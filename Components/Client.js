@@ -2,7 +2,7 @@ import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
-import { Menu, Button, Provider, Dialog, Portal } from 'react-native-paper';
+import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ImageView from "react-native-image-viewing";
 
@@ -118,7 +118,7 @@ export default function Client() {
                 customers === null ? null : <Provider>
                     <View
                         style={{
-                            paddingTop: 50,
+                            marginTop: 20,
                             flexDirection: 'row',
                             justifyContent: 'center',
                         }}>
@@ -135,8 +135,51 @@ export default function Client() {
                 </Provider>
             }
             {
-                customerSelected.nome_cognome === undefined ? null : <View>
-                    <Button onPress={() => {
+                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
+                    <Title>{customerSelected.nome_cognome}</Title>
+                    <Paragraph>{customerSelected.indirizzo}</Paragraph>
+                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                        <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title>
+                        <View style={{ flexDirection: "row", }}>
+                            <Button onPress={() => {
+                                setOpenSopralluogo(true)
+                                createImagesToShow(customerSelected.foto_sopralluogo)
+                            }}>Apri</Button>
+                            <Button onPress={() => {
+                                setOpenSopralluogo(true)
+                                createImagesToShow(customerSelected.foto_sopralluogo)
+                            }}>Carica</Button>
+                        </View>
+                    </View>
+                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                        <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Fine installazione</Title>
+                        <View style={{ flexDirection: "row", }}>
+                            <Button onPress={() => {
+                                setOpenInstallazione(true)
+                                createImagesToShow(customerSelected.foto_fine_installazione)
+                            }}>Apri</Button>
+                            <Button onPress={() => {
+                                setOpenInstallazione(true)
+                                createImagesToShow(customerSelected.foto_fine_installazione)
+                            }}>Carica</Button>
+                        </View>
+                    </View>
+                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                        <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title>
+                        <View style={{ flexDirection: "row", }}>
+                            <Button onPress={() => {
+                                setOpenAssistenza(true)
+                                createImagesToShow(customerSelected.foto_assistenza)
+                            }}>Apri</Button>
+                            <Button onPress={() => {
+                                setOpenAssistenza(true)
+                                createImagesToShow(customerSelected.foto_assistenza)
+                            }}>Carica</Button>
+                        </View>
+                    </View>
+
+
+                    {/* <Button onPress={() => {
                         setOpenSopralluogo(true)
                         createImagesToShow(customerSelected.foto_sopralluogo)
                     }}>Apri foto sopralluogo</Button>
@@ -147,7 +190,7 @@ export default function Client() {
                     <Button onPress={() => {
                         setOpenAssistenza(true)
                         createImagesToShow(customerSelected.foto_assistenza)
-                    }}>Apri foto di assistenza</Button>
+                    }}>Apri foto di assistenza</Button> */}
                 </View>
             }
             {

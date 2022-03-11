@@ -31,7 +31,7 @@ export default function Tabs({ user }) {
                             iconName = "gear"
                         } else if (route.name === 'QRScanner') {
                             iconName = "qrcode"
-                        } else if (route.name === 'Client') {
+                        } else if (route.name === 'Clienti') {
                             iconName = "users"
                         }
 
@@ -59,7 +59,7 @@ export default function Tabs({ user }) {
                 user !== "admin" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
             }
             <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
-            <Tab.Screen name="Client" children={() => <Client user={user} />} />
+            <Tab.Screen name="Clienti" children={() => <Client user={user} />} />
         </Tab.Navigator >
     );
 }
