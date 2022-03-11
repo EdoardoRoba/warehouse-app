@@ -50,8 +50,6 @@ export default function Tabs({ user }) {
                         headerShown: false,
                         color: "#fff"
                     },
-                    color: "white",
-                    activeTintColor: "white"
                 })
 
             }

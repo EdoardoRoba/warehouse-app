@@ -2,12 +2,12 @@ import React from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-export default function Admin() {
+export default function Admin({ user }) {
 
     // Return the SafeAreaView
     return (
         <View>
-            <Text>Ciao</Text>
+            <Text>Ciao {user}</Text>
         </View>
     );
 }
