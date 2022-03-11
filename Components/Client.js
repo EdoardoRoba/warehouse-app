@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function Client({ navigation }) {
+export default function Client() {
 
     const [customers, setCustomers] = React.useState([]);
     const [fotosToShow, setFotosToShow] = React.useState([]);

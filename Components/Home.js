@@ -47,30 +47,41 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function Home({ navigation }) {
+export default function Home({ user }) {
 
-    const goToQrscanner = () => {
-        navigation.navigate("QRScanner", { user: navigation.getParam("user") })
-    }
+    // const goToQrscanner = () => {
+    //     navigation.navigate("QRScanner", { user: user })
+    // }
 
-    const goToClients = () => {
-        navigation.navigate("Client", { user: navigation.getParam("user") })
-    }
+    // const goToClients = () => {
+    //     navigation.navigate("Client", { user: user })
+    // }
 
     return (
 
-        // <Navigator />
-        <View style={styles.container}>
-            <Text style={{ marginTop: 30, fontSize: 30, fontWeight: "bold" }}>Benvenuto {navigation.getParam("user")}!</Text>
-            <Text style={{ marginTop: 40, fontSize: 15 }}>Seleziona la sezione che vuoi visitare:</Text>
+        // // <Navigator />
+        // <View style={styles.container}>
+        //     <Text style={{ marginTop: 30, fontSize: 30, fontWeight: "bold" }}>Benvenuto {navigation.getParam("user")}!</Text>
+        //     <Text style={{ marginTop: 40, fontSize: 15 }}>Seleziona la sezione che vuoi visitare:</Text>
 
-            <View style={{ marginTop: 80, width: "100%" }}>
+        //     <View style={{ marginTop: 80, width: "100%" }}>
+        //         <Button title={'QR scanner'} onPress={() => goToQrscanner()} />
+        //     </View>
+
+        //     <View style={{ marginTop: 10, width: "100%" }}>
+        //         <Button title={'Clienti'} onPress={() => goToClients()} />
+        //     </View>
+        // </View>
+        <View style={styles.container}>
+            <Text style={{ marginTop: 30, fontSize: 30, fontWeight: "bold" }}>Benvenuto {user}!</Text>
+            <Text style={{ marginTop: 40, fontSize: 15 }}>Seleziona la sezione che vuoi visitare</Text>
+            {/* <View style={{ marginTop: 80, width: "100%" }}>
                 <Button title={'QR scanner'} onPress={() => goToQrscanner()} />
             </View>
 
             <View style={{ marginTop: 10, width: "100%" }}>
                 <Button title={'Clienti'} onPress={() => goToClients()} />
-            </View>
+            </View> */}
         </View>
     );
 }

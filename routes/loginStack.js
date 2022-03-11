@@ -1,9 +1,10 @@
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
-import Login from '../Components/Login'
-import QRScanner from '../Components/QRScanner'
-import Client from '../Components/Client'
-import Home from "../Components/Home";
+import Login from '../components/Login'
+import QRScanner from '../components/QRScanner'
+import Client from '../components/Client'
+import Home from "../components/Home";
+import Route from "../components/Route";
 
 const screens = {
     Login: {
@@ -12,24 +13,31 @@ const screens = {
             title: "Login"
         }
     },
-    Home: {
-        screen: Home,
+    Route: {
+        screen: Route,
         navigationOptions: {
-            title: "Home"
-        }
-    },
-    QRScanner: {
-        screen: QRScanner,
-        navigationOptions: {
-            title: "QRScanner"
-        }
-    },
-    Client: {
-        screen: Client,
-        navigationOptions: {
-            title: "Clienti"
+            title: "Idroaltech"
         }
     }
+    // ,
+    // Home: {
+    //     screen: Home,
+    //     navigationOptions: {
+    //         title: ""
+    //     }
+    // },
+    // QRScanner: {
+    //     screen: QRScanner,
+    //     navigationOptions: {
+    //         title: ""
+    //     }
+    // },
+    // Client: {
+    //     screen: Client,
+    //     navigationOptions: {
+    //         title: ""
+    //     }
+    // }
 }
 
 const HomeStack = createStackNavigator(screens, {

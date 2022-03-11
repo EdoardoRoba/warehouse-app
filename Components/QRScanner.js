@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function QRScanner({ navigation }) {
+export default function QRScanner() {
 
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
@@ -115,7 +115,7 @@ export default function QRScanner({ navigation }) {
 
     const updateBook = () => {
         var newField = {}
-        newField = { quantity: toolFound.quantity + diff, lastUser: navigation.getParam("user").toLowerCase() }
+        newField = { quantity: toolFound.quantity + diff, lastUser: user.toLowerCase() }
         setIsLoading(true)
         axiosInstance.put(url, newField).then(ersp => {
             axiosInstance.put(url, newField).then(response => {
@@ -128,7 +128,7 @@ export default function QRScanner({ navigation }) {
                     backgroundColor: "green",
                     color: "white"
                 });
-                var upds = { user: navigation.getParam("user"), tool: toolFound.label, totalQuantity: toolFound.quantity + diff, update: diff }
+                var upds = { user: user, tool: toolFound.label, totalQuantity: toolFound.quantity + diff, update: diff }
                 axiosInstance.post(beUrl + 'history/' + toolFound.label, upds)
                     .then(response => {
                         console.log("History added!")
@@ -166,7 +166,7 @@ export default function QRScanner({ navigation }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* <Text>Benvenuto {navigation.getParam("user")}!</Text> */}
+            {/* <Text>Benvenuto {user}!</Text> */}
             <FlashMessage position="top" />
             <SafeAreaView style={styles.barcodebox}>
                 <BarCodeScanner

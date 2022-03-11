@@ -1,7 +1,7 @@
 import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Button, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Button, Alert, ActivityIndicator, Text } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -76,12 +76,7 @@ export default function Login({ navigation }) {
                 setIsLoading(false)
                 setUsername("")
                 setPassword("")
-                navigation.navigate("Home", { user: usr })
-                // setToken(response.data.token)
-                // console.log("loggato!", response.data)
-                // localStorage.setItem("token", response.data.token)
-                // localStorage.setItem("auths", response.data.auths)
-                // localStorage.setItem("profile", response.data.profile)
+                navigation.navigate("Route", { user: usr })
             }).catch(error => {
                 setIsLoading(false)
                 setShowError(true)
@@ -126,7 +121,7 @@ export default function Login({ navigation }) {
                 </View>
             }
             {
-                (!showError) ? null : <Alert style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }} severity="error">Errore. Utente o password non corretti.</Alert>
+                (!showError) ? null : <Text style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: 10 }} severity="error">Errore. Utente o password non corretti.</Text>
             }
         </View>
     );
