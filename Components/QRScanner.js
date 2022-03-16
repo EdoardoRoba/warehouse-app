@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function QRScanner() {
+export default function QRScanner({ user }) {
 
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
@@ -129,13 +129,14 @@ export default function QRScanner() {
                     color: "white"
                 });
                 var upds = { user: user, tool: toolFound.label, totalQuantity: toolFound.quantity + diff, update: diff }
-                axiosInstance.post(beUrl + 'history/' + toolFound.label, upds)
+                axiosInstance.post(beUrl + 'history/' + toolFound.label.replaceAll("/", "%47"), upds)
                     .then(response => {
                         console.log("History added!")
                         setIsLoading(false)
                     }).catch(error => {
                         setShowError(true)
                         setIsLoading(false)
+                        console.log(error)
                     });
             }).catch((err) => {
                 setIsLoading(false)
@@ -202,7 +203,7 @@ export default function QRScanner() {
                 </View>
             }
             {
-                !showError ? null : <Alert style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }} severity="error">Errore. Controlla la connessione o i dati inseriti.</Alert>
+                !showError ? null : <Text style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: 10 }} severity="error">Errore. Controlla la connessione o i dati inseriti.</Text>
             }
         </SafeAreaView >
     );
