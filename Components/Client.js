@@ -1,18 +1,12 @@
 import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, Alert, ScrollView, Image, TouchableOpacity, PanResponder } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
 import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import ImageView from "react-native-image-viewing";
-// import * as ImagePicker from 'react-native-image-picker';
+import ImageView from "react-native-image-viewing";
 import * as ImagePicker from 'expo-image-picker';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-// import DocumentPicker from 'react-native-document-picker';
-// import * as DocumentPicker from 'expo-document-picker';
-// import ImagePickerExample from "./PickImage.js";
-// import { ImageBrowser } from 'expo-image-picker-multiple';
-
+import { ImageBrowser } from 'expo-image-picker-multiple';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,7 +50,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function Client({ user }) {
+export default function Client(props) {
 
     const [customers, setCustomers] = React.useState([]);
     const [fotosToShow, setFotosToShow] = React.useState([]);
@@ -68,18 +62,51 @@ export default function Client({ user }) {
     const [openInstallazione, setOpenInstallazione] = React.useState(false);
     const [openAssistenza, setOpenAssistenza] = React.useState(false);
     const [isVisible, setIsVisible] = React.useState(true);
-    const [photoSopralluogo, setPhotoSopralluogo] = React.useState(null);
-    const [isSopralluogoPicked, setIsSopralluogoPicked] = React.useState(false);
-    const [showSelectSopralluogo, setShowSelectSopralluogo] = React.useState(false);
-    const [selectedSopralluogo, setSelectedSopralluogo] = React.useState([{}]);
-    const [selectedInstallazione, setSelectedInstallazione] = React.useState([{}]);
-    const [selectedAssistenza, setSelectedAssistenza] = React.useState([{}]);
     const [image, setImage] = React.useState(null);
+    const [typology, setTypology] = React.useState("");
+
+    const { navigate } = props.navigation;
 
     React.useEffect(() => {
         getCustomers();
         setImage(null);
+        console.log("test")
     }, []);
+
+    React.useEffect(() => {
+        console.log("ciao")
+        setIsLoading(true)
+        const unsubscribe = props.navigation.addListener('state', () => {
+            // console.log("init", props.route.params)
+            if (props.route.params !== undefined && props.route.params !== null && props.route.params.length > 0) {
+                // console.log("propssss", props.route.params.photos[0])
+                var customer = {}
+                customer[typology] = customerSelected[typology]
+                for (let s of props.route.params.photos) {
+                    customer[typology].push(s.base64)
+                }
+                // console.log(customer.foto_sopralluogo)
+                axiosInstance.put("customer/" + customerSelected._id, customer).then(response => {
+                    // console.log("Fatto!", response)
+                    setConfermaUpdate(true)
+                    getCustomers()
+                    axiosInstance.get('customer/' + customerSelected._id).then((res) => {
+                        setIsLoading(false)
+                        setCustomerSelected(res.data)
+                    }).catch((error) => {
+                        // console.log("error: ", error)
+                        setIsLoading(false)
+                        setShowError(true)
+                    });
+                }).catch((error) => {
+                    // console.log("error: ", error)
+                    setIsLoading(false)
+                    setShowError(true)
+                });
+                props.route.params = {}
+            }
+        });
+    }, [props]);
 
     React.useEffect(() => {
         const timer = setTimeout(() => {
@@ -101,40 +128,6 @@ export default function Client({ user }) {
                 setShowError(true)
             });
     }
-
-    const selectSopralluogo = () => {
-        // setShowSelectSopralluogo(true)
-        pickImage()
-    }
-
-    const handleUploadPhotoSopralluogo = (type) => {
-        var customer = {}
-        customer[type] = customerSelected[type]
-        for (let ph of photoSopralluogo) {
-            console.log(ph.base64)
-            customer[type].push(ph.base64)
-        }
-    };
-
-    const pickImage = () => {
-        // No permissions request is necessary for launching the image library
-        console.log("ciaooo:")
-        ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 1,
-            allowsMultipleSelection: true
-        }).then((result) => {
-            console.log(result);
-
-            if (!result.cancelled) {
-                setImage(result.uri);
-                console.log("uri:")
-                console.log(result.uri)
-            }
-        });
-    };
 
     const openMenu = () => {
         setVisible(true)
@@ -160,6 +153,28 @@ export default function Client({ user }) {
         }
         setFotosToShow(ftss)
     }
+
+    const pickImage = (typology) => {
+        // No permissions request is necessary for launching the image library
+        // ImagePicker.launchImageLibraryAsync({
+        //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+        //     allowsEditing: true,
+        //     aspect: [4, 3],
+        //     quality: 1,
+        // }).then((result) => {
+
+        //     console.log(result);
+
+        //     if (!result.cancelled) {
+        //         setImage(result.uri);
+        //         console.log("uri1111111:")
+        //         console.log(result.uri)
+        //     }
+
+        // });
+        setTypology(typology)
+        navigate('ImageBrowser')
+    };
 
     return (
         <View style={styles.container}>
@@ -195,12 +210,9 @@ export default function Client({ user }) {
                                 setOpenSopralluogo(true)
                                 createImagesToShow(customerSelected.foto_sopralluogo)
                             }}>Apri</Button>
-                            {/* <Button
-                                onPress={handleChoosePhotoSopralluogo}>Select File
-                            </Button> */}
-                            <Button onPress={selectSopralluogo}  >
-                                <Text>Carica</Text>
-                            </Button>
+                            <Button onPress={() => {
+                                pickImage("foto_sopralluogo")
+                            }}>Carica</Button>
                         </View>
                     </View>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
@@ -229,20 +241,6 @@ export default function Client({ user }) {
                             }}>Carica</Button>
                         </View>
                     </View>
-
-
-                    {/* <Button onPress={() => {
-                        setOpenSopralluogo(true)
-                        createImagesToShow(customerSelected.foto_sopralluogo)
-                    }}>Apri foto sopralluogo</Button>
-                    <Button onPress={() => {
-                        setOpenInstallazione(true)
-                        createImagesToShow(customerSelected.foto_fine_installazione)
-                    }}>Apri foto di fine installazione</Button>
-                    <Button onPress={() => {
-                        setOpenAssistenza(true)
-                        createImagesToShow(customerSelected.foto_assistenza)
-                    }}>Apri foto di assistenza</Button> */}
                 </View>
             }
             {
@@ -262,12 +260,22 @@ export default function Client({ user }) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {/* <ImageView
+                                            {/* {
+                                                customerSelected.foto_sopralluogo.map(s => {
+                                                    return <View>
+                                                        <Image
+                                                            source={{ uri: s }}
+                                                            style={{ height: 250, width: 300, marginTop: 3 }}
+                                                        />
+                                                    </View>
+                                                })
+                                            } */}
+                                            <ImageView
                                                 images={fotosToShow}
                                                 imageIndex={0}
                                                 visible={openSopralluogo}
                                                 onRequestClose={() => setOpenSopralluogo(false)}
-                                            /> */}
+                                            />
                                         </View>
                                     }
                                 </ScrollView >
@@ -285,12 +293,22 @@ export default function Client({ user }) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {/* <ImageView
+                                            {/* {
+                                                customerSelected.foto_fine_installazione.map(i => {
+                                                    return <View>
+                                                        <Image
+                                                            source={{ uri: i }}
+                                                            style={{ height: 250, width: 300, marginTop: 3 }}
+                                                        />
+                                                    </View>
+                                                })
+                                            } */}
+                                            <ImageView
                                                 images={fotosToShow}
                                                 imageIndex={0}
                                                 visible={openInstallazione}
                                                 onRequestClose={() => setOpenInstallazione(false)}
-                                            /> */}
+                                            />
                                         </View>
                                     }
                                 </ScrollView>
@@ -307,12 +325,22 @@ export default function Client({ user }) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text style={{ justifyContent: 'center', alignItems: 'center' }}>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {/* <ImageView
+                                            {/* {
+                                                customerSelected.foto_assistenza.map(a => {
+                                                    return <View>
+                                                        <Image
+                                                            source={{ uri: a }}
+                                                            style={{ height: 250, width: 300, marginTop: 3 }}
+                                                        />
+                                                    </View>
+                                                })
+                                            } */}
+                                            <ImageView
                                                 images={fotosToShow}
                                                 imageIndex={0}
                                                 visible={openAssistenza}
                                                 onRequestClose={() => setOpenAssistenza(false)}
-                                            /> */}
+                                            />
                                         </View>
                                     }
                                 </ScrollView>

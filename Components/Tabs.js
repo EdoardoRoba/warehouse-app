@@ -7,6 +7,7 @@ import Admin from './Admin';
 import QRScanner from './QRScanner';
 import Home from './Home';
 import Client from './Client';
+import HomeClient from './HomeClient';
 import { Feather } from '@expo/vector-icons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -59,7 +60,7 @@ export default function Tabs({ user }) {
                 user !== "admin" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
             }
             <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
-            <Tab.Screen name="Clienti" children={() => <Client user={user} />} />
+            <Tab.Screen name="Clienti" children={() => <HomeClient user={user} />} />
         </Tab.Navigator >
     );
 }
