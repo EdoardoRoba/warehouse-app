@@ -22,7 +22,7 @@ export default function ImageBrowserScreen(props) {
                     uri: pPhoto.uri,
                     name: photo.filename,
                     type: 'image/jpg',
-                    base64: pPhoto.base64
+                    // base64: pPhoto.base64
                 })
             }
             // CARICA LE FOTO DIRETTAMENTE DI QUA!

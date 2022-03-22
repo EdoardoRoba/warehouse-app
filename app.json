@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "qr-scanner",
-    "slug": "qr-scanner",
+    "name": "magazzino",
+    "slug": "magazzino",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

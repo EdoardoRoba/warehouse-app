@@ -7,6 +7,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ImageView from "react-native-image-viewing";
 import * as ImagePicker from 'expo-image-picker';
 import { ImageBrowser } from 'expo-image-picker-multiple';
+import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
+import { storage } from "../firebase";
 
 const Stack = createNativeStackNavigator();
 
@@ -70,43 +72,73 @@ export default function Client(props) {
     React.useEffect(() => {
         getCustomers();
         setImage(null);
-        console.log("test")
     }, []);
 
     React.useEffect(() => {
-        console.log("ciao")
         setIsLoading(true)
-        const unsubscribe = props.navigation.addListener('state', () => {
-            // console.log("init", props.route.params)
-            if (props.route.params !== undefined && props.route.params !== null && props.route.params.length > 0) {
-                // console.log("propssss", props.route.params.photos[0])
-                var customer = {}
-                customer[typology] = customerSelected[typology]
-                for (let s of props.route.params.photos) {
-                    customer[typology].push(s.base64)
-                }
-                // console.log(customer.foto_sopralluogo)
-                axiosInstance.put("customer/" + customerSelected._id, customer).then(response => {
-                    // console.log("Fatto!", response)
-                    setConfermaUpdate(true)
-                    getCustomers()
-                    axiosInstance.get('customer/' + customerSelected._id).then((res) => {
-                        setIsLoading(false)
-                        setCustomerSelected(res.data)
+        // console.log("init", props)
+        // const unsubscribe = props.navigation.addListener('state', () => {
+        // console.log("init", props.route.params)
+        if (props.route.params !== undefined && props.route.params.photos !== undefined) {
+            // console.log("propssss", props.route.params.photos)
+            var customer = {}
+            customer[typology] = customerSelected[typology]
+            for (let s of props.route.params.photos) {
+                console.log(s)
+                uploadImageAsync(s)
+                // customer[typology].push(s.base64)
+            }
+            props.route.params = {}
+        }
+        // });
+    }, [props]);
+
+    async function uploadImageAsync(ph) {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                console.log(e);
+                reject(new TypeError("Error"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", ph.uri, true);
+            xhr.send(null);
+        });
+        const now = Date.now()
+        var customer = {}
+        customer[typology] = customerSelected[typology]
+        const storageRef = ref(storage, '/files/' + customerSelected.nome_cognome + '/' + typology.replace("foto_", "") + '/' + now + "_" + ph.name.toLowerCase())
+        const uploadTask = uploadBytesResumable(storageRef, blob)
+        uploadTask.on("state_changed", (snapshot) => {
+            console.log("Uploading...")
+        }, (error) => console.log("error: ", error),
+            () => {
+                //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
+                getDownloadURL(uploadTask.snapshot.ref).then((fileUrl) => {
+                    console.log("fileUrl: ", fileUrl)
+                    customer[typology].push(fileUrl)
+                    axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer).then(response => {
+                        axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer).then(resp => {
+                            setCustomerSelected(resp.data)
+                            setIsLoading(false)
+                            getCustomers()
+                        }).catch((error) => {
+                            console.log("error: ", error)
+                            setIsLoading(false)
+                            setShowError(true)
+                        });
                     }).catch((error) => {
-                        // console.log("error: ", error)
+                        console.log("error: ", error)
                         setIsLoading(false)
                         setShowError(true)
                     });
-                }).catch((error) => {
-                    // console.log("error: ", error)
-                    setIsLoading(false)
-                    setShowError(true)
-                });
-                props.route.params = {}
+                })
             }
-        });
-    }, [props]);
+        )
+    }
 
     React.useEffect(() => {
         const timer = setTimeout(() => {
@@ -249,7 +281,7 @@ export default function Client(props) {
                 </View>
             }
             {
-                (!showError) ? null : <Alert style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: '1rem' }} severity="error">Errore di connessione.</Alert>
+                (!showError) ? null : <Text style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: 30 }} severity="error">Errore di connessione.</Text>
             }
 
             {
