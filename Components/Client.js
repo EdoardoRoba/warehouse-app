@@ -2,7 +2,7 @@ import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
-import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal } from 'react-native-paper';
+import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal, List } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ImageView from "react-native-image-viewing";
 import * as ImagePicker from 'expo-image-picker';
@@ -151,8 +151,10 @@ export default function Client(props) {
         setIsLoading(true)
         axiosInstance.get(beUrl + 'customer')
             .then(res => {
+                let custs = res.data
+                custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
                 // console.log("Tools: ", res.data)
-                setCustomers(res.data)
+                setCustomers(custs)
                 setIsLoading(false)
             }).catch(error => {
                 setIsLoading(false)
@@ -219,15 +221,30 @@ export default function Client(props) {
                             flexDirection: 'row',
                             justifyContent: 'center',
                         }}>
-                        <Menu
-                            visible={visible}
-                            onDismiss={closeMenu}
-                            anchor={<Button onPress={openMenu}>Seleziona cliente</Button>}>
-
-                            {customers.map(c => {
-                                return <Menu.Item onPress={() => { openCustomer(c) }} style={{ overflowY: 'auto' }} key={c.nome_cognome} title={c.nome_cognome} />
-                            })}
-                        </Menu>
+                        <Button onPress={openMenu}>Seleziona cliente</Button>
+                        {/* <ScrollView style={{ maxHeight: 300 }}>
+                            <Menu
+                                visible={visible}
+                                onDismiss={closeMenu}
+                                anchor={<Button onPress={openMenu}>Seleziona cliente</Button>}
+                                contentStyle={{ maxHeight: 300 }}
+                            >
+                                {customers.map(c => {
+                                    return <Menu.Item onPress={() => { openCustomer(c) }} key={c.nome_cognome} title={c.nome_cognome} />
+                                })}
+                            </Menu>
+                        </ScrollView> */}
+                        <Portal>
+                            <Dialog visible={visible} onDismiss={() => { closeMenu() }} style={{ height: 500, justifyContent: 'center', alignItems: 'center' }}>
+                                <Dialog.ScrollArea>
+                                    <ScrollView>
+                                        {customers.map(c => {
+                                            return <Menu.Item onPress={() => { openCustomer(c) }} key={c.nome_cognome} title={c.nome_cognome} />
+                                        })}
+                                    </ScrollView>
+                                </Dialog.ScrollArea>
+                            </Dialog>
+                        </Portal>
                     </View>
                 </Provider>
             }
