@@ -51,7 +51,7 @@ export default function QRScanner({ user }) {
     const [diff, setDiff] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const colorAddButton = user === "admin" ? "white" : "black"
+    const maxValue = user === "admin" ? null : 0
 
     const askForCameraPermission = () => {
         (async () => {
@@ -195,11 +195,10 @@ export default function QRScanner({ user }) {
                                 </Card.Content>
                             </Card>
                             <View style={{ flexDirection: "row", alignItems: 'center', marginTop: 10, marginLeft: 30, marginRight: 30, width: '100%' }}>
-                                <Text style={{ marginRight: 0 }}>togli</Text>
-                                <NumericInput rightButtonBackgroundColor={colorAddButton} style={{ flex: 2 }} onChange={value => setDiff(value)} />
-                                {
-                                    user !== "admin" ? null : <Text style={{ flex: 3, marginLeft: 5 }}>aggiungi</Text>
-                                }
+                                <Text style={{ flex: 1 }}>togli</Text>
+                                <NumericInput maxValue={maxValue} style={{ flex: 2 }} onChange={value => setDiff(value)} />
+                                <Text style={{ flex: 3, marginLeft: 5 }}>aggiungi</Text>
+
                             </View>
                             <Button title={'Aggiorna'} onPress={() => updateBook()} color='tomato' />
                         </SafeAreaView>
