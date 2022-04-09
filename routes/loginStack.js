@@ -5,6 +5,7 @@ import QRScanner from '../components/QRScanner'
 import Client from '../components/Client'
 import Home from "../components/Home";
 import Route from "../components/Route";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const screens = {
     Login: {
@@ -19,25 +20,6 @@ const screens = {
             title: "Idroaltech"
         }
     }
-    // ,
-    // Home: {
-    //     screen: Home,
-    //     navigationOptions: {
-    //         title: ""
-    //     }
-    // },
-    // QRScanner: {
-    //     screen: QRScanner,
-    //     navigationOptions: {
-    //         title: ""
-    //     }
-    // },
-    // Client: {
-    //     screen: Client,
-    //     navigationOptions: {
-    //         title: ""
-    //     }
-    // }
 }
 
 const HomeStack = createStackNavigator(screens, {

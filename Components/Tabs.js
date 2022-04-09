@@ -12,6 +12,7 @@ import { Feather } from '@expo/vector-icons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MyCalendar from './MyCalendar';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,8 @@ export default function Tabs({ user }) {
                             iconName = "qrcode"
                         } else if (route.name === 'Clienti') {
                             iconName = "users"
+                        } else if (route.name === 'Calendario') {
+                            iconName = "calendar"
                         }
 
                         // You can return any component that you like here!
@@ -61,6 +64,7 @@ export default function Tabs({ user }) {
             }
             <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
             <Tab.Screen name="Clienti" children={() => <HomeClient user={user} />} />
+            <Tab.Screen name="Calendario" children={() => <MyCalendar user={user} />} />
         </Tab.Navigator >
     );
 }

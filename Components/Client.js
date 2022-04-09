@@ -342,16 +342,6 @@ export default function Client(props) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {/* {
-                                                customerSelected.foto_fine_installazione.map(i => {
-                                                    return <View>
-                                                        <Image
-                                                            source={{ uri: i }}
-                                                            style={{ height: 250, width: 300, marginTop: 3 }}
-                                                        />
-                                                    </View>
-                                                })
-                                            } */}
                                             <ImageView
                                                 images={fotosToShow}
                                                 imageIndex={0}
@@ -374,16 +364,6 @@ export default function Client(props) {
                                 <ScrollView>
                                     {
                                         customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text style={{ justifyContent: 'center', alignItems: 'center' }}>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {/* {
-                                                customerSelected.foto_assistenza.map(a => {
-                                                    return <View>
-                                                        <Image
-                                                            source={{ uri: a }}
-                                                            style={{ height: 250, width: 300, marginTop: 3 }}
-                                                        />
-                                                    </View>
-                                                })
-                                            } */}
                                             <ImageView
                                                 images={fotosToShow}
                                                 imageIndex={0}
