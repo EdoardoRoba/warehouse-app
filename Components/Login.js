@@ -2,6 +2,7 @@ import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Button, Alert, ActivityIndicator, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -76,6 +77,7 @@ export default function Login({ navigation }) {
                 setIsLoading(false)
                 setUsername("")
                 setPassword("")
+                AsyncStorage.setItem("token", response.data.token)
                 navigation.navigate("Route", { user: usr })
             }).catch(error => {
                 setIsLoading(false)

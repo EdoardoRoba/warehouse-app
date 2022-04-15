@@ -9,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { ImageBrowser } from 'expo-image-picker-multiple';
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,12 +67,14 @@ export default function Client(props) {
     const [isVisible, setIsVisible] = React.useState(true);
     const [image, setImage] = React.useState(null);
     const [typology, setTypology] = React.useState("");
+    const [token, setToken] = React.useState("");
 
     const { navigate } = props.navigation;
 
     React.useEffect(() => {
         getCustomers();
         setImage(null);
+        getToken()
     }, []);
 
     React.useEffect(() => {
@@ -92,6 +95,10 @@ export default function Client(props) {
         }
         // });
     }, [props]);
+
+    const getToken = async () => {
+        setToken(await AsyncStorage.getItem("token"))
+    }
 
     async function uploadImageAsync(ph) {
         const blob = await new Promise((resolve, reject) => {
@@ -120,8 +127,8 @@ export default function Client(props) {
                 getDownloadURL(uploadTask.snapshot.ref).then((fileUrl) => {
                     console.log("fileUrl: ", fileUrl)
                     customer[typology].push(fileUrl)
-                    axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer).then(response => {
-                        axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer).then(resp => {
+                    axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer, { headers: { "Authorization": `Bearer ${token}` } }).then(response => {
+                        axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer, { headers: { "Authorization": `Bearer ${token}` } }).then(resp => {
                             setCustomerSelected(resp.data)
                             setIsLoading(false)
                             getCustomers()
@@ -149,7 +156,7 @@ export default function Client(props) {
 
     const getCustomers = () => {
         setIsLoading(true)
-        axiosInstance.get(beUrl + 'customer')
+        axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` } })
             .then(res => {
                 let custs = res.data
                 custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)

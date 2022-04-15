@@ -4,7 +4,7 @@ import { StyleSheet, ActivityIndicator, View, ScrollView, Text, Image } from 're
 import { Menu } from 'react-native-paper';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import randomColor from "randomcolor";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const styles = StyleSheet.create({
     container: {
@@ -53,22 +53,32 @@ export default function MyCalendar({ user }) {
     const [customersInEvent, setCustomersInEvent] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true);
     const [showDates, setShowDates] = React.useState(false);
+    const [token, setToken] = React.useState(null);
 
     // Request Camera Permission
     React.useEffect(() => {
-        getEvents();
+        getToken()
     }, []);
 
+    // Request Camera Permission
+    React.useEffect(() => {
+        if (token) {
+            getEvents();
+        }
+    }, [token]);
+
     const getEvents = () => {
-        axiosInstance.get(beUrl + 'calendar')
+        let userFilter = user
+        if (userFilter === "mirisola") {
+            userFilter = "admin"
+        }
+        axiosInstance.get(beUrl + 'calendar?user=' + userFilter, { headers: { "Authorization": `Bearer ${token}` } })
             .then(res => {
-                // console.log("calendar: ", res.data)
                 setEvents(res.data)
                 createDataset(res.data)
             }).catch(error => {
-                // console.log("error")
                 setIsLoading(false)
-                setShowError(true)
+                // setShowError(true)
             });
     }
 
@@ -107,6 +117,11 @@ export default function MyCalendar({ user }) {
         setIsLoading(false)
     }
 
+    const getToken = async () => {
+        let tkn = await AsyncStorage.getItem("token")
+        setToken(tkn)
+    }
+
     const showDate = (day) => {
         if (eventsCalendar[day.dateString] !== undefined) {
             let cies = []
@@ -138,11 +153,13 @@ export default function MyCalendar({ user }) {
                 </View>
             }
             {
-                !showDates ? null : <ScrollView>
-                    {customersInEvent.map(c => {
-                        return <Menu.Item key={c} title={c} />
-                    })}
-                </ScrollView>
+                !showDates ? null : <View style={{ width: 700 }}>
+                    <ScrollView>
+                        {customersInEvent.map(c => {
+                            return <Menu.Item key={c} title={c} />
+                        })}
+                    </ScrollView>
+                </View>
             }
         </View>
     );

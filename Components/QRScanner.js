@@ -7,6 +7,7 @@ import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 import NumericInput from 'react-native-numeric-input';
 import FlashMessage, { showMessage } from "react-native-flash-message";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,8 +51,9 @@ export default function QRScanner({ user }) {
     const [toolFound, setToolFound] = React.useState({});
     const [diff, setDiff] = React.useState(0);
     const [isLoading, setIsLoading] = React.useState(false);
+    const [token, setToken] = React.useState("");
 
-    const maxValue = user === "admin" ? null : 0
+    const maxValue = (user === "admin" || user === "mirisola") ? null : 0
 
     const askForCameraPermission = () => {
         (async () => {
@@ -63,6 +65,7 @@ export default function QRScanner({ user }) {
     // Request Camera Permission
     React.useEffect(() => {
         askForCameraPermission();
+        getToken()
     }, []);
 
     React.useEffect(() => {
@@ -86,10 +89,14 @@ export default function QRScanner({ user }) {
         return () => clearTimeout(timer);
     }, [confermaUpdate]);
 
+    const getToken = async () => {
+        setToken(await AsyncStorage.getItem("token"))
+    }
+
     React.useEffect(() => {
         if (scanned && url.includes(beUrl)) {
             setIsLoading(true)
-            axiosInstance.get(url)
+            axiosInstance.get(url, { headers: { "Authorization": `Bearer ${token}` } })
                 .then(response => {
                     // console.log("ciao", response.data)
                     setIsLoading(false)
@@ -119,8 +126,8 @@ export default function QRScanner({ user }) {
         var newField = {}
         newField = { quantity: toolFound.quantity + diff, lastUser: user.toLowerCase() }
         setIsLoading(true)
-        axiosInstance.put(url, newField).then(ersp => {
-            axiosInstance.put(url, newField).then(response => {
+        axiosInstance.put(url, newField, { headers: { "Authorization": `Bearer ${token}` } }).then(ersp => {
+            axiosInstance.put(url, newField, { headers: { "Authorization": `Bearer ${token}` } }).then(response => {
                 // console.log("Fatto!", response.data)
                 setConfermaUpdate(true)
                 setToolFound(response.data)
@@ -131,7 +138,7 @@ export default function QRScanner({ user }) {
                     color: "white"
                 });
                 var upds = { user: user, tool: toolFound.label, totalQuantity: toolFound.quantity + diff, update: diff }
-                axiosInstance.post(beUrl + 'history/' + toolFound.label.replaceAll("/", "%47"), upds)
+                axiosInstance.post(beUrl + 'history/' + toolFound.label.replaceAll("/", "%47"), upds, { headers: { "Authorization": `Bearer ${token}` } })
                     .then(response => {
                         console.log("History added!")
                         setIsLoading(false)
@@ -198,7 +205,6 @@ export default function QRScanner({ user }) {
                                 <Text style={{ flex: 1 }}>togli</Text>
                                 <NumericInput maxValue={maxValue} style={{ flex: 2 }} onChange={value => setDiff(value)} />
                                 <Text style={{ flex: 3, marginLeft: 5 }}>aggiungi</Text>
-
                             </View>
                             <Button title={'Aggiorna'} onPress={() => updateBook()} color='tomato' />
                         </SafeAreaView>
