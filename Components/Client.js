@@ -1,17 +1,11 @@
 import { axiosInstance, beUrl } from "../config.js"
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, Alert, ScrollView, Image } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Alert, Linking, ScrollView, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
 import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal, List } from 'react-native-paper';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ImageView from "react-native-image-viewing";
-import * as ImagePicker from 'expo-image-picker';
-import { ImageBrowser } from 'expo-image-picker-multiple';
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const Stack = createNativeStackNavigator();
 
 const styles = StyleSheet.create({
     container: {
@@ -51,6 +45,59 @@ const styles = StyleSheet.create({
         zIndex: 1,
         backgroundColor: 'transparent'
     },
+    centeredView: {
+        // flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: "50%"
+    },
+    modalView: {
+        // margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        // padding: 100,
+        // paddingBottom: 100,
+        // paddingTop: 100,
+        // paddingVertical: 200,
+        // paddingHorizontal: 120,
+        // justifyContent:"center",
+        height: 400,
+        width: 250,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    buttonOpen: {
+        backgroundColor: "#0282ba",
+    },
+    buttonClose: {
+        backgroundColor: "#0282ba",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginTop: 15,
+        marginBottom: 40,
+        textAlign: "center"
+    },
+    outsideModal: {
+        backgroundColor: "transparent",
+        flex: 1,
+    }
 });
 
 export default function Client(props) {
@@ -67,12 +114,15 @@ export default function Client(props) {
     const [isVisible, setIsVisible] = React.useState(true);
     const [image, setImage] = React.useState(null);
     const [typology, setTypology] = React.useState("");
+    const [section, setSection] = React.useState("");
     const [token, setToken] = React.useState("");
+    const [modalVisibleSopralluogo, setModalVisibleSopralluogo] = React.useState(false);
+    const [modalVisibleInstallazione, setModalVisibleInstallazione] = React.useState(false);
+    const [modalVisibleAssistenza, setModalVisibleAssistenza] = React.useState(false);
 
     const { navigate } = props.navigation;
 
     React.useEffect(() => {
-        getCustomers();
         setImage(null);
         getToken()
     }, []);
@@ -87,7 +137,7 @@ export default function Client(props) {
             var customer = {}
             customer[typology] = customerSelected[typology]
             for (let s of props.route.params.photos) {
-                console.log(s)
+                // console.log(s)
                 uploadImageAsync(s)
                 // customer[typology].push(s.base64)
             }
@@ -95,6 +145,12 @@ export default function Client(props) {
         }
         // });
     }, [props]);
+
+    React.useEffect(() => {
+        if (token) {
+            getCustomers();
+        }
+    }, [token]);
 
     const getToken = async () => {
         setToken(await AsyncStorage.getItem("token"))
@@ -165,7 +221,7 @@ export default function Client(props) {
                 setIsLoading(false)
             }).catch(error => {
                 setIsLoading(false)
-                console.log("Tool not found")
+                console.log("Customer not found")
                 setShowError(true)
             });
     }
@@ -195,25 +251,8 @@ export default function Client(props) {
         setFotosToShow(ftss)
     }
 
-    const pickImage = (typology) => {
-        // No permissions request is necessary for launching the image library
-        // ImagePicker.launchImageLibraryAsync({
-        //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-        //     allowsEditing: true,
-        //     aspect: [4, 3],
-        //     quality: 1,
-        // }).then((result) => {
-
-        //     console.log(result);
-
-        //     if (!result.cancelled) {
-        //         setImage(result.uri);
-        //         console.log("uri1111111:")
-        //         console.log(result.uri)
-        //     }
-
-        // });
-        setTypology(typology)
+    const pickImage = (typo) => {
+        setTypology(typo)
         navigate('ImageBrowser')
     };
 
@@ -260,41 +299,65 @@ export default function Client(props) {
                     <Title>{customerSelected.nome_cognome}</Title>
                     <Paragraph>{customerSelected.indirizzo}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title>
+                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
                         <View style={{ flexDirection: "row", }}>
-                            <Button onPress={() => {
-                                setOpenSopralluogo(true)
-                                createImagesToShow(customerSelected.foto_sopralluogo)
-                            }}>Apri</Button>
-                            <Button onPress={() => {
-                                pickImage("foto_sopralluogo")
-                            }}>Carica</Button>
+                            <Pressable
+                                style={[styles.button, styles.buttonOpen]}
+                                onPress={() => {
+                                    setSection("sopralluogo")
+                                    setModalVisibleSopralluogo(true)
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Apri sopralluogo</Text>
+                            </Pressable>
+                            {/* <Text style={{ color: 'blue' }}
+                                onPress={() => Linking.openURL('https://firebasestorage.googleapis.com/v0/b/magazzino-2a013.appspot.com/o/files%2Ftizio%20caio%2Fcheck_list_1647886217946?alt=media&token=3990cea6-7638-4cab-8630-0d1f912a7964')}>
+                                Google
+                            </Text> */}
                         </View>
                     </View>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Fine installazione</Title>
+                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Fine installazione</Title> */}
                         <View style={{ flexDirection: "row", }}>
+                            <Pressable
+                                style={[styles.button, styles.buttonOpen]}
+                                onPress={() => {
+                                    setSection("installazione")
+                                    setModalVisibleSopralluogo(true)
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Apri installazione</Text>
+                            </Pressable>
+                            {/* <Button onPress={() => {
+                                setOpenInstallazione(true)
+                                createImagesToShow(customerSelected.foto_fine_installazione)
+                            }}>Apri foto</Button>
                             <Button onPress={() => {
                                 setOpenInstallazione(true)
                                 createImagesToShow(customerSelected.foto_fine_installazione)
-                            }}>Apri</Button>
-                            <Button onPress={() => {
-                                setOpenInstallazione(true)
-                                createImagesToShow(customerSelected.foto_fine_installazione)
-                            }}>Carica</Button>
+                            }}>Carica foto</Button> */}
                         </View>
                     </View>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title>
+                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
                         <View style={{ flexDirection: "row", }}>
+                            <Pressable
+                                style={[styles.button, styles.buttonOpen]}
+                                onPress={() => {
+                                    setSection("assistenza")
+                                    setModalVisibleAssistenza(true)
+                                }}
+                            >
+                                <Text style={styles.textStyle}>Apri assistenza</Text>
+                            </Pressable>
+                            {/* <Button onPress={() => {
+                                setOpenAssistenza(true)
+                                createImagesToShow(customerSelected.foto_assistenza)
+                            }}>Apri foto</Button>
                             <Button onPress={() => {
                                 setOpenAssistenza(true)
                                 createImagesToShow(customerSelected.foto_assistenza)
-                            }}>Apri</Button>
-                            <Button onPress={() => {
-                                setOpenAssistenza(true)
-                                createImagesToShow(customerSelected.foto_assistenza)
-                            }}>Carica</Button>
+                            }}>Carica foto</Button> */}
                         </View>
                     </View>
                 </View>
@@ -385,6 +448,170 @@ export default function Client(props) {
                     </Portal>
                 </Provider>
             }
-        </View>
+            <Modal
+                visible={modalVisibleSopralluogo}
+                onRequestClose={() => setModalVisibleSopralluogo(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setModalVisibleSopralluogo(false);
+                        }
+                    }} >
+                    {/* <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.modalText}>Hello World!</Text>
+                            <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModalVisibleSopralluogo(!modalVisibleSopralluogo)}
+                            >
+                                <Text style={styles.textStyle}>Hide Modal</Text>
+                            </Pressable>
+                        </View>
+                    </View> */}
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Title style={styles.modalText}>Sopralluogo</Title>
+                            <View style={{ flexDirection: "row", }}>
+                                <Button onPress={() => {
+                                    setOpenSopralluogo(true)
+                                    createImagesToShow(customerSelected.foto_sopralluogo)
+                                    setModalVisibleSopralluogo(false)
+                                }}>Apri foto</Button>
+                                <Button onPress={() => {
+                                    pickImage("foto_sopralluogo")
+                                    setModalVisibleSopralluogo(false)
+                                }}>Carica foto</Button>
+                            </View>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data sopralluogo: {customerSelected.data_sopralluogo}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_sopralluogo}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_sopralluogo}</Text>
+                            </View>
+                            {
+                                customerSelected.pdf_sopralluogo === undefined ? null : <View style={{ marginTop: 20 }}>
+                                    {
+                                        customerSelected.pdf_sopralluogo.map((pf, idx) => {
+                                            return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                onPress={() => Linking.openURL(pf)}>
+                                                {"pdf " + (idx + 1)}
+                                            </Text>
+                                        })
+                                    }
+                                </View>
+                            }
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+            <Modal
+                visible={modalVisibleInstallazione}
+                onRequestClose={() => setModalVisibleInstallazione(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setModalVisibleInstallazione(false);
+                        }
+                    }} >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Title style={styles.modalText}>Installazione</Title>
+                            <View style={{ flexDirection: "row", }}>
+                                <Button onPress={() => {
+                                    setOpenInstallazione(true)
+                                    createImagesToShow(customerSelected.foto_fine_installazione)
+                                    setModalVisibleInstallazione(false)
+                                }}>Apri foto</Button>
+                                <Button onPress={() => {
+                                    pickImage("foto_fine_installazione")
+                                    setModalVisibleInstallazione(false)
+                                }}>Carica foto</Button>
+                            </View>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data installazione: {customerSelected.data_installazione}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_installazione}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Computo (testo): {customerSelected.computo}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_installazione}</Text>
+                            </View>
+                            {
+                                customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 20 }}>
+                                    {
+                                        customerSelected.pdf_computo.map((pc, idx) => {
+                                            return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                onPress={() => Linking.openURL(pc)}>
+                                                {"pdf " + (idx + 1)}
+                                            </Text>
+                                        })
+                                    }
+                                </View>
+                            }
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+            <Modal
+                visible={modalVisibleAssistenza}
+                onRequestClose={() => setModalVisibleAssistenza(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setModalVisibleAssistenza(false);
+                        }
+                    }} >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <Title style={styles.modalText}>Assistenza</Title>
+                            <View style={{ flexDirection: "row", }}>
+                                <Button onPress={() => {
+                                    setOpenAssistenza(true)
+                                    createImagesToShow(customerSelected.foto_assistenza)
+                                    setModalVisibleAssistenza(false)
+                                }}>Apri foto</Button>
+                                <Button onPress={() => {
+                                    pickImage("foto_assistenza")
+                                    setModalVisibleAssistenza(false)
+                                }}>Carica foto</Button>
+                            </View>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data assistenza: {customerSelected.data_assistenza}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_assistenza}</Text>
+                            </View>
+                            <View style={{ marginTop: 5 }}>
+                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_assistenza}</Text>
+                            </View>
+                            {
+                                customerSelected.assistenza === undefined ? null : <View style={{ marginTop: 20 }}>
+                                    {
+                                        customerSelected.assistenza.map((pi, idx) => {
+                                            return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                onPress={() => Linking.openURL(pi)}>
+                                                {"pdf " + (idx + 1)}
+                                            </Text>
+                                        })
+                                    }
+                                </View>
+                            }
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+        </View >
     );
 }
