@@ -1,10 +1,11 @@
 import { axiosInstance, beUrl } from "../config.js"
 import React from 'react';
-import { StyleSheet, ActivityIndicator, View, ScrollView, Text, Image } from 'react-native';
+import { StyleSheet, ActivityIndicator, View, ScrollView, Text, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
 import randomColor from "randomcolor";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Client from "./Client.js";
 
 const styles = StyleSheet.create({
     container: {
@@ -44,16 +45,23 @@ const styles = StyleSheet.create({
         zIndex: 1,
         backgroundColor: 'transparent'
     },
+    rMaxWidth181ramg: {
+        maxWidth: '100%'
+    }
 });
 
-export default function MyCalendar({ user }) {
+export default function MyCalendar(props) {
 
     const [events, setEvents] = React.useState([])
     const [eventsCalendar, setEventsCalendar] = React.useState([])
     const [customersInEvent, setCustomersInEvent] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true);
     const [showDates, setShowDates] = React.useState(false);
+    const [openModal, setOpenModal] = React.useState(false);
     const [token, setToken] = React.useState(null);
+    const [customerSelected, setCustomerSelected] = React.useState();
+
+    const { navigate } = props.navigation;
 
     // Request Camera Permission
     React.useEffect(() => {
@@ -68,7 +76,7 @@ export default function MyCalendar({ user }) {
     }, [token]);
 
     const getEvents = () => {
-        let userFilter = user
+        let userFilter = props.route.params.user
         if (userFilter === "mirisola") {
             userFilter = "admin"
         }
@@ -95,11 +103,11 @@ export default function MyCalendar({ user }) {
                 }
                 let period = {}
                 if (dt === new Date(e.start)) {
-                    period = { startingDay: true, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title }
+                    period = { startingDay: true, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, customerId: e.customer._id }
                 } else if (dt === new Date(e.end)) {
-                    period = { startingDay: false, endingDay: true, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title }
+                    period = { startingDay: false, endingDay: true, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, customerId: e.customer._id }
                 } else {
-                    period = { startingDay: false, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title }
+                    period = { startingDay: false, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, customerId: e.customer._id }
                 }
                 periods.push(period)
                 if (eventCalendar[dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0")] === undefined) {
@@ -127,7 +135,7 @@ export default function MyCalendar({ user }) {
             let cies = []
             // console.log(eventsCalendar[day.dateString].periods)
             for (let period of eventsCalendar[day.dateString].periods) {
-                cies.push(period.customer + " - " + period.title)
+                cies.push({ title: period.customer + " - " + period.title, customerId: period.customerId })
             }
             setCustomersInEvent(cies)
             setShowDates(true)
@@ -135,6 +143,20 @@ export default function MyCalendar({ user }) {
             setCustomersInEvent([])
             setShowDates(false)
         }
+    }
+
+    const showCustomer = (id) => {
+        setIsLoading(true)
+        axiosInstance.get(beUrl + 'customer/' + id, { headers: { "Authorization": `Bearer ${token}` } })
+            .then(res => {
+                setCustomerSelected(res.data)
+                setOpenModal(true)
+                setIsLoading(false)
+                navigate('Client', { customerSelected: res.data });
+            }).catch(error => {
+                setIsLoading(false)
+                // setShowError(true)
+            });
     }
 
     // Return the SafeAreaView
@@ -153,14 +175,29 @@ export default function MyCalendar({ user }) {
                 </View>
             }
             {
-                !showDates ? null : <View style={{ width: 700 }}>
+                !showDates ? null : <View style={{ width: "100%", marginTop: 15 }}>
                     <ScrollView>
                         {customersInEvent.map(c => {
-                            return <Menu.Item key={c} title={c} />
+                            // return <Menu.Item onPress={() => { showCustomer(c) }} key={c} title={c} />
+                            return <Text key={c.title} style={{ marginBottom: 15 }} onPress={() => { showCustomer(c.customerId) }}>{c.title}</Text>
                         })}
                     </ScrollView>
                 </View>
             }
+            {/* <Modal
+                visible={openModal}
+                onRequestClose={() => setOpenModal(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setOpenModal(false);
+                        }
+                    }} >
+                    <Client></Client>
+                </Pressable>
+            </Modal> */}
         </View>
     );
 }

@@ -13,6 +13,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyCalendar from './MyCalendar';
+import HomeCalendar from './HomeCalendar';
 
 const Tab = createBottomTabNavigator();
 
@@ -64,7 +65,7 @@ export default function Tabs({ user }) {
             }
             <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
             <Tab.Screen name="Clienti" children={() => <HomeClient user={user} />} />
-            <Tab.Screen name="Calendario" children={() => <MyCalendar user={user} />} />
+            <Tab.Screen name="Calendario" children={() => <HomeCalendar user={user} />} />
         </Tab.Navigator >
     );
 }

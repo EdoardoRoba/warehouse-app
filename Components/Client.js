@@ -129,19 +129,17 @@ export default function Client(props) {
 
     React.useEffect(() => {
         setIsLoading(true)
-        // console.log("init", props)
-        // const unsubscribe = props.navigation.addListener('state', () => {
-        // console.log("init", props.route.params)
         if (props.route.params !== undefined && props.route.params.photos !== undefined) {
-            // console.log("propssss", props.route.params.photos)
             var customer = {}
             customer[typology] = customerSelected[typology]
             for (let s of props.route.params.photos) {
                 // console.log(s)
                 uploadImageAsync(s)
-                // customer[typology].push(s.base64)
             }
             props.route.params = {}
+        }
+        if (props.route.params !== undefined && props.route.params.customerSelected !== undefined) {
+            setCustomerSelected(props.route.params.customerSelected)
         }
         // });
     }, [props]);
