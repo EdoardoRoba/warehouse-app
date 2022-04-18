@@ -478,10 +478,12 @@ export default function Client(props) {
                                     createImagesToShow(customerSelected.foto_sopralluogo)
                                     setModalVisibleSopralluogo(false)
                                 }}>Apri foto</Button>
-                                <Button onPress={() => {
-                                    pickImage("foto_sopralluogo")
-                                    setModalVisibleSopralluogo(false)
-                                }}>Carica foto</Button>
+                                {
+                                    props.route.params !== undefined && props.route.params.customerSelected !== undefined ? null : <Button onPress={() => {
+                                        pickImage("foto_sopralluogo")
+                                        setModalVisibleSopralluogo(false)
+                                    }}>Carica foto</Button>
+                                }
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Data sopralluogo: {customerSelected.data_sopralluogo}</Text>
@@ -533,10 +535,12 @@ export default function Client(props) {
                                     createImagesToShow(customerSelected.foto_fine_installazione)
                                     setModalVisibleInstallazione(false)
                                 }}>Apri foto</Button>
-                                <Button onPress={() => {
-                                    pickImage("foto_fine_installazione")
-                                    setModalVisibleInstallazione(false)
-                                }}>Carica foto</Button>
+                                {
+                                    props.route.params !== undefined && props.route.params.customerSelected !== undefined ? null : <Button onPress={() => {
+                                        pickImage("foto_fine_installazione")
+                                        setModalVisibleInstallazione(false)
+                                    }}>Carica foto</Button>
+                                }
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Data installazione: {customerSelected.data_installazione}</Text>
@@ -592,10 +596,12 @@ export default function Client(props) {
                                     createImagesToShow(customerSelected.foto_assistenza)
                                     setModalVisibleAssistenza(false)
                                 }}>Apri foto</Button>
-                                <Button onPress={() => {
-                                    pickImage("foto_assistenza")
-                                    setModalVisibleAssistenza(false)
-                                }}>Carica foto</Button>
+                                {
+                                    props.route.params !== undefined && props.route.params.customerSelected !== undefined ? null : <Button onPress={() => {
+                                        pickImage("foto_assistenza")
+                                        setModalVisibleAssistenza(false)
+                                    }}>Carica foto</Button>
+                                }
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Data assistenza: {customerSelected.data_assistenza}</Text>
