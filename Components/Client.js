@@ -297,7 +297,8 @@ export default function Client(props) {
             {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
                     <Title>{customerSelected.nome_cognome}</Title>
-                    <Paragraph>{customerSelected.indirizzo}</Paragraph>
+                    <Paragraph style={{ marginTop: 15 }}>{customerSelected.company}</Paragraph>
+                    <Paragraph>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
                         <View style={{ flexDirection: "row", }}>
@@ -323,7 +324,7 @@ export default function Client(props) {
                                 style={[styles.button, styles.buttonOpen]}
                                 onPress={() => {
                                     setSection("installazione")
-                                    setModalVisibleSopralluogo(true)
+                                    setModalVisibleInstallazione(true)
                                 }}
                             >
                                 <Text style={styles.textStyle}>Apri installazione</Text>
@@ -494,14 +495,18 @@ export default function Client(props) {
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_sopralluogo}</Text>
                             </View>
                             {
-                                customerSelected.pdf_sopralluogo === undefined ? null : <View style={{ marginTop: 20 }}>
+                                customerSelected.pdf_sopralluogo === undefined ? null : <View>
                                     {
-                                        customerSelected.pdf_sopralluogo.map((pf, idx) => {
-                                            return <Text style={{ color: 'blue', marginBottom: 5 }}
-                                                onPress={() => Linking.openURL(pf)}>
-                                                {"pdf " + (idx + 1)}
-                                            </Text>
-                                        })
+                                        customerSelected.pdf_sopralluogo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> : <View style={{ marginTop: 20 }}>
+                                            {
+                                                customerSelected.pdf_sopralluogo.map((pf, idx) => {
+                                                    return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                        onPress={() => Linking.openURL(pf)}>
+                                                        {"pdf " + (idx + 1)}
+                                                    </Text>
+                                                })
+                                            }
+                                        </View>
                                     }
                                 </View>
                             }
@@ -509,6 +514,7 @@ export default function Client(props) {
                     </View>
                 </Pressable>
             </Modal>
+
             <Modal
                 visible={modalVisibleInstallazione}
                 onRequestClose={() => setModalVisibleInstallazione(false)}
@@ -547,14 +553,19 @@ export default function Client(props) {
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_installazione}</Text>
                             </View>
                             {
-                                customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 20 }}>
+                                customerSelected.pdf_computo === undefined ? null : <View>
                                     {
-                                        customerSelected.pdf_computo.map((pc, idx) => {
-                                            return <Text style={{ color: 'blue', marginBottom: 5 }}
-                                                onPress={() => Linking.openURL(pc)}>
-                                                {"pdf " + (idx + 1)}
-                                            </Text>
-                                        })
+                                        customerSelected.pdf_computo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                            <View style={{ marginTop: 20 }}>
+                                                {
+                                                    customerSelected.pdf_computo.map((pc, idx) => {
+                                                        return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                            onPress={() => Linking.openURL(pc)}>
+                                                            {"pdf " + (idx + 1)}
+                                                        </Text>
+                                                    })
+                                                }
+                                            </View>
                                     }
                                 </View>
                             }
@@ -562,6 +573,7 @@ export default function Client(props) {
                     </View>
                 </Pressable>
             </Modal>
+
             <Modal
                 visible={modalVisibleAssistenza}
                 onRequestClose={() => setModalVisibleAssistenza(false)}
@@ -597,14 +609,19 @@ export default function Client(props) {
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_assistenza}</Text>
                             </View>
                             {
-                                customerSelected.assistenza === undefined ? null : <View style={{ marginTop: 20 }}>
+                                customerSelected.assistenza === undefined ? null : <View>
                                     {
-                                        customerSelected.assistenza.map((pi, idx) => {
-                                            return <Text style={{ color: 'blue', marginBottom: 5 }}
-                                                onPress={() => Linking.openURL(pi)}>
-                                                {"pdf " + (idx + 1)}
-                                            </Text>
-                                        })
+                                        customerSelected.assistenza.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                            <View style={{ marginTop: 20 }}>
+                                                {
+                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                        return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                            onPress={() => Linking.openURL(pi)}>
+                                                            {"pdf " + (idx + 1)}
+                                                        </Text>
+                                                    })
+                                                }
+                                            </View>
                                     }
                                 </View>
                             }
