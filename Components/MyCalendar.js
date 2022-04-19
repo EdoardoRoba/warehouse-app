@@ -135,7 +135,7 @@ export default function MyCalendar(props) {
             let cies = []
             // console.log(eventsCalendar[day.dateString].periods)
             for (let period of eventsCalendar[day.dateString].periods) {
-                cies.push({ title: period.customer + " - " + period.title, customerId: period.customerId })
+                cies.push({ title: period.title, customerId: period.customerId })
             }
             setCustomersInEvent(cies)
             setShowDates(true)
@@ -152,7 +152,7 @@ export default function MyCalendar(props) {
                 setCustomerSelected(res.data)
                 setOpenModal(true)
                 setIsLoading(false)
-                navigate('Client', { customerSelected: res.data });
+                navigate('ClientCalendar', { customerSelected: res.data });
             }).catch(error => {
                 setIsLoading(false)
                 // setShowError(true)
