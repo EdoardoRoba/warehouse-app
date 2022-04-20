@@ -296,6 +296,7 @@ export default function Client(props) {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
                     <Title>{customerSelected.nome_cognome}</Title>
                     <Paragraph style={{ marginTop: 15 }}>{customerSelected.company}</Paragraph>
+                    <Paragraph style={{ marginTop: 15 }}>{customerSelected.telefono}</Paragraph>
                     <Paragraph>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
