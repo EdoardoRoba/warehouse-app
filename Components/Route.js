@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { Text } from 'react-native-paper';
 import Tabs from "./Tabs.js";
+import Logout from './Logout.js';
 
 export default function Route({ navigation }) {
 

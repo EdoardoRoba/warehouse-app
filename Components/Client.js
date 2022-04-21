@@ -271,10 +271,10 @@ export default function Client(props) {
                     <View
                         style={{
                             marginTop: 20,
-                            flexDirection: 'row',
+                            flexDirection: 'column',
                             justifyContent: 'center',
                         }}>
-                        {/* <Button onPress={openMenu}>Seleziona cliente</Button> */}
+                        <Text>Seleziona cliente</Text>
                         {/* <Portal>
                             <Dialog visible={visible} onDismiss={() => { closeMenu() }} style={{ height: 500, justifyContent: 'center', alignItems: 'center' }}>
                                 <Dialog.ScrollArea>
@@ -297,18 +297,17 @@ export default function Client(props) {
                                 }
                             }}
                             textInputProps={{
-                                placeholder: "Seleziona cliente...",
                                 style: {
                                     width: 300,
-                                    color: "#0282ba",
-                                    zIndex: 999
+                                    color: "black",
+                                    zIndex: 999,
                                 },
                                 zIndex: 999
                             }}
                             rightButtonsContainerStyle={{
                                 borderRadius: 25,
                                 alignSelfs: "center",
-                                color: "#0282ba",
+                                color: "black",
                                 zIndex: 999
                             }}
                             inputContainerStyle={{
@@ -325,7 +324,7 @@ export default function Client(props) {
                 </Provider>
             }
             {
-                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -20, alignItems: 'center', zIndex: -1 }}>
+                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", alignItems: 'center', zIndex: -1 }}>
                     <Title style={{ fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.telefono}</Paragraph>

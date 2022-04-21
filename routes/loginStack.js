@@ -1,11 +1,9 @@
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
+import { TouchableOpacity } from "react-native";
 import Login from '../components/Login'
-import QRScanner from '../components/QRScanner'
-import Client from '../components/Client'
-import Home from "../components/Home";
 import Route from "../components/Route";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Logout from "../components/Logout";
 
 const screens = {
     Login: {
@@ -16,10 +14,18 @@ const screens = {
     },
     Route: {
         screen: Route,
-        navigationOptions: {
-            title: "Idroaltech"
-        }
-    }
+        navigationOptions: ({ navigation }) => ({
+            title: "Idroaltech",
+            headerRight: (
+                <TouchableOpacity
+                    // style={{ backgroundColor: '#DDDDDD', padding: 5 }}
+                    onPress={() => navigation.navigate("Login")}>
+                    <Logout />
+                </TouchableOpacity>
+            ),
+            headerLeft: null
+        })
+    },
 }
 
 const HomeStack = createStackNavigator(screens, {

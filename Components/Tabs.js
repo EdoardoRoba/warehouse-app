@@ -8,11 +8,7 @@ import QRScanner from './QRScanner';
 import Home from './Home';
 import Client from './Client';
 import HomeClient from './HomeClient';
-import { Feather } from '@expo/vector-icons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MyCalendar from './MyCalendar';
 import HomeCalendar from './HomeCalendar';
 
 const Tab = createBottomTabNavigator();
