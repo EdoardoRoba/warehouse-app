@@ -64,6 +64,7 @@ export default function ImageBrowserScreen(props) {
 
     return (
         <View style={[styles.flex, styles.container]}>
+            <Text>Scegli foto</Text>
             <ImageBrowser
                 max={10}
                 onChange={updateHandler}

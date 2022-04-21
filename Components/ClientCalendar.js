@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "50%"
+        marginTop: "30%"
     },
     modalView: {
         // margin: 20,
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         // paddingVertical: 200,
         // paddingHorizontal: 120,
         // justifyContent:"center",
-        height: 400,
-        width: 250,
+        height: "90%",
+        width: "95%",
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -87,7 +87,8 @@ const styles = StyleSheet.create({
     textStyle: {
         color: "white",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        fontSize: 20
     },
     modalText: {
         marginTop: 15,
@@ -260,7 +261,7 @@ export default function ClientCalendar(props) {
                                     setModalVisibleSopralluogo(true)
                                 }}
                             >
-                                <Text style={styles.textStyle}>Apri sopralluogo</Text>
+                                <Text style={styles.textStyle}>Sopralluogo</Text>
                             </Pressable>
                             {/* <Text style={{ color: 'blue' }}
                                 onPress={() => Linking.openURL('https://firebasestorage.googleapis.com/v0/b/magazzino-2a013.appspot.com/o/files%2Ftizio%20caio%2Fcheck_list_1647886217946?alt=media&token=3990cea6-7638-4cab-8630-0d1f912a7964')}>
@@ -278,7 +279,7 @@ export default function ClientCalendar(props) {
                                     setModalVisibleInstallazione(true)
                                 }}
                             >
-                                <Text style={styles.textStyle}>Apri installazione</Text>
+                                <Text style={styles.textStyle}>Installazione</Text>
                             </Pressable>
                             {/* <Button onPress={() => {
                                 setOpenInstallazione(true)
@@ -290,19 +291,20 @@ export default function ClientCalendar(props) {
                             }}>Carica foto</Button> */}
                         </View>
                     </View>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
-                        <View style={{ flexDirection: "row", }}>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => {
-                                    setSection("assistenza")
-                                    setModalVisibleAssistenza(true)
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Apri assistenza</Text>
-                            </Pressable>
-                            {/* <Button onPress={() => {
+                    {
+                        !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                            {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
+                            <View style={{ flexDirection: "row", }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        setSection("assistenza")
+                                        setModalVisibleAssistenza(true)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Assistenza</Text>
+                                </Pressable>
+                                {/* <Button onPress={() => {
                                 setOpenAssistenza(true)
                                 createImagesToShow(customerSelected.foto_assistenza)
                             }}>Apri foto</Button>
@@ -310,8 +312,9 @@ export default function ClientCalendar(props) {
                                 setOpenAssistenza(true)
                                 createImagesToShow(customerSelected.foto_assistenza)
                             }}>Carica foto</Button> */}
+                            </View>
                         </View>
-                    </View>
+                    }
                 </View>
             }
             {

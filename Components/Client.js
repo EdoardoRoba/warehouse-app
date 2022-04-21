@@ -6,6 +6,7 @@ import ImageView from "react-native-image-viewing";
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown'
 
 const styles = StyleSheet.create({
     container: {
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "50%"
+        marginTop: "30%"
     },
     modalView: {
         // margin: 20,
@@ -61,8 +62,8 @@ const styles = StyleSheet.create({
         // paddingVertical: 200,
         // paddingHorizontal: 120,
         // justifyContent:"center",
-        height: 400,
-        width: 250,
+        height: "90%",
+        width: "95%",
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -87,7 +88,8 @@ const styles = StyleSheet.create({
     textStyle: {
         color: "white",
         fontWeight: "bold",
-        textAlign: "center"
+        textAlign: "center",
+        fontSize: 20
     },
     modalText: {
         marginTop: 15,
@@ -119,6 +121,7 @@ export default function Client(props) {
     const [modalVisibleSopralluogo, setModalVisibleSopralluogo] = React.useState(false);
     const [modalVisibleInstallazione, setModalVisibleInstallazione] = React.useState(false);
     const [modalVisibleAssistenza, setModalVisibleAssistenza] = React.useState(false);
+    const [dataset, setDataset] = React.useState(null)
 
     const { navigate } = props.navigation;
 
@@ -214,6 +217,12 @@ export default function Client(props) {
             .then(res => {
                 let custs = res.data
                 custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
+                let ds = res.data.map((cust) => ({
+                    id: cust.nome_cognome,
+                    title: cust.nome_cognome,
+                    customerSelected: cust
+                }))
+                setDataset(ds)
                 // console.log("Tools: ", res.data)
                 setCustomers(custs)
                 setIsLoading(false)
@@ -222,15 +231,6 @@ export default function Client(props) {
                 console.log("Customer not found")
                 setShowError(true)
             });
-    }
-
-    const openMenu = () => {
-        setVisible(true)
-        setCustomerSelected({})
-    }
-
-    const closeMenu = () => {
-        setVisible(false)
     }
 
     const openCustomer = (c) => {
@@ -265,20 +265,8 @@ export default function Client(props) {
                             flexDirection: 'row',
                             justifyContent: 'center',
                         }}>
-                        <Button onPress={openMenu}>Seleziona cliente</Button>
-                        {/* <ScrollView style={{ maxHeight: 300 }}>
-                            <Menu
-                                visible={visible}
-                                onDismiss={closeMenu}
-                                anchor={<Button onPress={openMenu}>Seleziona cliente</Button>}
-                                contentStyle={{ maxHeight: 300 }}
-                            >
-                                {customers.map(c => {
-                                    return <Menu.Item onPress={() => { openCustomer(c) }} key={c.nome_cognome} title={c.nome_cognome} />
-                                })}
-                            </Menu>
-                        </ScrollView> */}
-                        <Portal>
+                        {/* <Button onPress={openMenu}>Seleziona cliente</Button> */}
+                        {/* <Portal>
                             <Dialog visible={visible} onDismiss={() => { closeMenu() }} style={{ height: 500, justifyContent: 'center', alignItems: 'center' }}>
                                 <Dialog.ScrollArea>
                                     <ScrollView>
@@ -288,16 +276,51 @@ export default function Client(props) {
                                     </ScrollView>
                                 </Dialog.ScrollArea>
                             </Dialog>
-                        </Portal>
+                        </Portal> */}
+                        <AutocompleteDropdown
+                            clearOnFocus={false}
+                            closeOnBlur={true}
+                            closeOnSubmit={false}
+                            // initialValue={{ id: '2' }} // or just '2'
+                            onSelectItem={(event) => {
+                                if (event !== null) {
+                                    openCustomer(event.customerSelected)
+                                }
+                            }}
+                            textInputProps={{
+                                placeholder: "Seleziona cliente...",
+                                style: {
+                                    width: 300,
+                                    color: "#0282ba",
+                                    zIndex: 999
+                                },
+                                zIndex: 999
+                            }}
+                            rightButtonsContainerStyle={{
+                                borderRadius: 25,
+                                alignSelfs: "center",
+                                color: "#0282ba",
+                                zIndex: 999
+                            }}
+                            inputContainerStyle={{
+                                backgroundColor: "white",
+                                zIndex: 999
+                            }}
+                            suggestionsListContainerStyle={{
+                                zIndex: 999
+                            }}
+                            containerStyle={{ flexGrow: 1, flexShrink: 1 }}
+                            dataSet={dataset}
+                        />
                     </View>
                 </Provider>
             }
             {
-                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
-                    <Title>{customerSelected.nome_cognome}</Title>
-                    <Paragraph style={{ marginTop: 15 }}>{customerSelected.company}</Paragraph>
-                    <Paragraph style={{ marginTop: 15 }}>{customerSelected.telefono}</Paragraph>
-                    <Paragraph>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
+                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -20, alignItems: 'center', zIndex: -1 }}>
+                    <Title style={{ fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.telefono}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
                         <View style={{ flexDirection: "row", }}>
@@ -308,12 +331,8 @@ export default function Client(props) {
                                     setModalVisibleSopralluogo(true)
                                 }}
                             >
-                                <Text style={styles.textStyle}>Apri sopralluogo</Text>
+                                <Text style={styles.textStyle}>Sopralluogo</Text>
                             </Pressable>
-                            {/* <Text style={{ color: 'blue' }}
-                                onPress={() => Linking.openURL('https://firebasestorage.googleapis.com/v0/b/magazzino-2a013.appspot.com/o/files%2Ftizio%20caio%2Fcheck_list_1647886217946?alt=media&token=3990cea6-7638-4cab-8630-0d1f912a7964')}>
-                                Google
-                            </Text> */}
                         </View>
                     </View>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
@@ -326,40 +345,26 @@ export default function Client(props) {
                                     setModalVisibleInstallazione(true)
                                 }}
                             >
-                                <Text style={styles.textStyle}>Apri installazione</Text>
+                                <Text style={styles.textStyle}>Installazione</Text>
                             </Pressable>
-                            {/* <Button onPress={() => {
-                                setOpenInstallazione(true)
-                                createImagesToShow(customerSelected.foto_fine_installazione)
-                            }}>Apri foto</Button>
-                            <Button onPress={() => {
-                                setOpenInstallazione(true)
-                                createImagesToShow(customerSelected.foto_fine_installazione)
-                            }}>Carica foto</Button> */}
                         </View>
                     </View>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
-                        <View style={{ flexDirection: "row", }}>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => {
-                                    setSection("assistenza")
-                                    setModalVisibleAssistenza(true)
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Apri assistenza</Text>
-                            </Pressable>
-                            {/* <Button onPress={() => {
-                                setOpenAssistenza(true)
-                                createImagesToShow(customerSelected.foto_assistenza)
-                            }}>Apri foto</Button>
-                            <Button onPress={() => {
-                                setOpenAssistenza(true)
-                                createImagesToShow(customerSelected.foto_assistenza)
-                            }}>Carica foto</Button> */}
+                    {
+                        !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                            {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
+                            <View style={{ flexDirection: "row", }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        setSection("assistenza")
+                                        setModalVisibleAssistenza(true)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Assistenza</Text>
+                                </Pressable>
+                            </View>
                         </View>
-                    </View>
+                    }
                 </View>
             }
             {
