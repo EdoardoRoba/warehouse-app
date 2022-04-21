@@ -5,6 +5,7 @@ import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal, List } 
 import ImageView from "react-native-image-viewing";
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
+import * as Clipboard from "expo-clipboard";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown'
 
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "30%"
+        marginTop: "20%"
     },
     modalView: {
         // margin: 20,
@@ -109,6 +110,7 @@ export default function Client(props) {
     const [customerSelected, setCustomerSelected] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(false);
     const [showError, setShowError] = React.useState(false);
+    const [showCopyboard, setShowCopyboard] = React.useState(false);
     const [visible, setVisible] = React.useState(false);
     const [openSopralluogo, setOpenSopralluogo] = React.useState(false);
     const [openInstallazione, setOpenInstallazione] = React.useState(false);
@@ -152,6 +154,13 @@ export default function Client(props) {
             getCustomers();
         }
     }, [token]);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowCopyboard(false)
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [showCopyboard]);
 
     const getToken = async () => {
         setToken(await AsyncStorage.getItem("token"))
@@ -320,7 +329,11 @@ export default function Client(props) {
                     <Title style={{ fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.telefono}</Paragraph>
-                    <Paragraph style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
+                    <Paragraph onPress={() => {
+                        Clipboard.setString(customerSelected.indirizzo + "," + customerSelected.comune + "," + customerSelected.provincia)
+                        setShowCopyboard(true)
+                    }}
+                        style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
                         <View style={{ flexDirection: "row", }}>
@@ -375,7 +388,9 @@ export default function Client(props) {
             {
                 (!showError) ? null : <Text style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: 30 }} severity="error">Errore di connessione.</Text>
             }
-
+            {
+                !showCopyboard ? null : Alert.alert("Copiato negli appunti!")
+            }
             {
                 (customerSelected === undefined || customerSelected.foto_sopralluogo === undefined) ? null : <Provider>
                     <Portal>
@@ -479,36 +494,35 @@ export default function Client(props) {
                         <View style={styles.modalView}>
                             <Title style={styles.modalText}>Sopralluogo</Title>
                             <View style={{ flexDirection: "row", }}>
-                                <Button onPress={() => {
+                                {/* <Button onPress={() => {
                                     setOpenSopralluogo(true)
                                     createImagesToShow(customerSelected.foto_sopralluogo)
                                     setModalVisibleSopralluogo(false)
-                                }}>Apri foto</Button>
-                                {
-                                    props.route.params !== undefined && props.route.params.customerSelected !== undefined ? null : <Button onPress={() => {
-                                        pickImage("foto_sopralluogo")
+                                }}>Apri foto</Button> */}
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        setOpenSopralluogo(true)
+                                        createImagesToShow(customerSelected.foto_sopralluogo)
                                         setModalVisibleSopralluogo(false)
-                                    }}>Carica foto</Button>
-                                }
-                            </View>
-                            <View style={{ marginTop: 20 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data sopralluogo: {customerSelected.data_sopralluogo}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_sopralluogo}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_sopralluogo}</Text>
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                </Pressable>
+                                {/* <Button onPress={() => {
+                                    pickImage("foto_sopralluogo")
+                                    setModalVisibleSopralluogo(false)
+                                }}>Carica foto</Button> */}
                             </View>
                             {
-                                customerSelected.pdf_sopralluogo === undefined ? null : <View>
+                                customerSelected.pdf_sopralluogo === undefined ? null : <View style={{ marginTop: 30 }}>
                                     {
                                         customerSelected.pdf_sopralluogo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> : <View style={{ marginTop: 20 }}>
                                             {
                                                 customerSelected.pdf_sopralluogo.map((pf, idx) => {
-                                                    return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                    return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 18 }}
                                                         onPress={() => Linking.openURL(pf)}>
-                                                        {"pdf " + (idx + 1)}
+                                                        {"modulo pdf"}
                                                     </Text>
                                                 })
                                             }
@@ -516,6 +530,28 @@ export default function Client(props) {
                                     }
                                 </View>
                             }
+                            <View style={{ marginTop: 10 }}>
+                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data sopralluogo:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_sopralluogo}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_sopralluogo}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_sopralluogo}</Text>
+                                </View>
+                            </View>
+                            <View style={{ bottom: "-30%" }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        pickImage("foto_sopralluogo")
+                                        setModalVisibleSopralluogo(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </Pressable>
@@ -541,12 +577,10 @@ export default function Client(props) {
                                     createImagesToShow(customerSelected.foto_fine_installazione)
                                     setModalVisibleInstallazione(false)
                                 }}>Apri foto</Button>
-                                {
-                                    props.route.params !== undefined && props.route.params.customerSelected !== undefined ? null : <Button onPress={() => {
-                                        pickImage("foto_fine_installazione")
-                                        setModalVisibleInstallazione(false)
-                                    }}>Carica foto</Button>
-                                }
+                                <Button onPress={() => {
+                                    pickImage("foto_fine_installazione")
+                                    setModalVisibleInstallazione(false)
+                                }}>Carica foto</Button>
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Data installazione: {customerSelected.data_installazione}</Text>
@@ -602,12 +636,10 @@ export default function Client(props) {
                                     createImagesToShow(customerSelected.foto_assistenza)
                                     setModalVisibleAssistenza(false)
                                 }}>Apri foto</Button>
-                                {
-                                    props.route.params !== undefined && props.route.params.customerSelected !== undefined ? null : <Button onPress={() => {
-                                        pickImage("foto_assistenza")
-                                        setModalVisibleAssistenza(false)
-                                    }}>Carica foto</Button>
-                                }
+                                <Button onPress={() => {
+                                    pickImage("foto_assistenza")
+                                    setModalVisibleAssistenza(false)
+                                }}>Carica foto</Button>
                             </View>
                             <View style={{ marginTop: 20 }}>
                                 <Text style={{ color: 'blue', marginBottom: 5 }}>Data assistenza: {customerSelected.data_assistenza}</Text>

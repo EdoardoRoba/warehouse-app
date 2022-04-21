@@ -6,6 +6,7 @@ import ImageView from "react-native-image-viewing";
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Clipboard from "expo-clipboard";
 
 const styles = StyleSheet.create({
     container: {
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        marginTop: "30%"
+        marginTop: "20%"
     },
     modalView: {
         // margin: 20,
@@ -108,6 +109,7 @@ export default function ClientCalendar(props) {
     const [customerSelected, setCustomerSelected] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(false);
     const [showError, setShowError] = React.useState(false);
+    const [showCopyboard, setShowCopyboard] = React.useState(false);
     const [visible, setVisible] = React.useState(false);
     const [openSopralluogo, setOpenSopralluogo] = React.useState(false);
     const [openInstallazione, setOpenInstallazione] = React.useState(false);
@@ -130,7 +132,6 @@ export default function ClientCalendar(props) {
 
     React.useEffect(() => {
         setIsLoading(true)
-        console.log(props)
         if (props.route.params !== undefined && props.route.params.photos !== undefined) {
             var customer = {}
             customer[typology] = customerSelected[typology]
@@ -151,6 +152,13 @@ export default function ClientCalendar(props) {
             getCustomers();
         }
     }, [token]);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowCopyboard(false)
+        }, 100);
+        return () => clearTimeout(timer);
+    }, [showCopyboard]);
 
     const getToken = async () => {
         setToken(await AsyncStorage.getItem("token"))
@@ -247,10 +255,14 @@ export default function ClientCalendar(props) {
             {/* <Text style={{ marginTop: 10 }}>Welcome in client section!</Text> */}
             {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
-                    <Title style={{ marginTop: 55 }}>{customerSelected.nome_cognome}</Title>
-                    <Paragraph style={{ marginTop: 15 }}>{customerSelected.company}</Paragraph>
-                    <Paragraph style={{ marginTop: 15 }}>{customerSelected.telefono}</Paragraph>
-                    <Paragraph>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
+                    <Title style={{ marginTop: 50, fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.telefono}</Paragraph>
+                    <Paragraph onPress={() => {
+                        Clipboard.setString(customerSelected.indirizzo + "," + customerSelected.comune + "," + customerSelected.provincia)
+                        setShowCopyboard(true)
+                    }}
+                        style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
                         <View style={{ flexDirection: "row", }}>
@@ -325,7 +337,9 @@ export default function ClientCalendar(props) {
             {
                 (!showError) ? null : <Text style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto', marginTop: 30 }} severity="error">Errore di connessione.</Text>
             }
-
+            {
+                !showCopyboard ? null : Alert.alert("Copiato negli appunti!")
+            }
             {
                 (customerSelected === undefined || customerSelected.foto_sopralluogo === undefined) ? null : <Provider>
                     <Portal>
@@ -429,34 +443,35 @@ export default function ClientCalendar(props) {
                         <View style={styles.modalView}>
                             <Title style={styles.modalText}>Sopralluogo</Title>
                             <View style={{ flexDirection: "row", }}>
-                                <Button onPress={() => {
+                                {/* <Button onPress={() => {
                                     setOpenSopralluogo(true)
                                     createImagesToShow(customerSelected.foto_sopralluogo)
                                     setModalVisibleSopralluogo(false)
-                                }}>Apri foto</Button>
-                                <Button onPress={() => {
+                                }}>Apri foto</Button> */}
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        setOpenSopralluogo(true)
+                                        createImagesToShow(customerSelected.foto_sopralluogo)
+                                        setModalVisibleSopralluogo(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                </Pressable>
+                                {/* <Button onPress={() => {
                                     pickImage("foto_sopralluogo")
                                     setModalVisibleSopralluogo(false)
-                                }}>Carica foto</Button>
-                            </View>
-                            <View style={{ marginTop: 20 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data sopralluogo: {customerSelected.data_sopralluogo}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_sopralluogo}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_sopralluogo}</Text>
+                                }}>Carica foto</Button> */}
                             </View>
                             {
-                                customerSelected.pdf_sopralluogo === undefined ? null : <View>
+                                customerSelected.pdf_sopralluogo === undefined ? null : <View style={{ marginTop: 30 }}>
                                     {
                                         customerSelected.pdf_sopralluogo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> : <View style={{ marginTop: 20 }}>
                                             {
                                                 customerSelected.pdf_sopralluogo.map((pf, idx) => {
-                                                    return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                    return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 18 }}
                                                         onPress={() => Linking.openURL(pf)}>
-                                                        {"pdf " + (idx + 1)}
+                                                        {"modulo pdf"}
                                                     </Text>
                                                 })
                                             }
@@ -464,6 +479,28 @@ export default function ClientCalendar(props) {
                                     }
                                 </View>
                             }
+                            <View style={{ marginTop: 10 }}>
+                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data sopralluogo:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_sopralluogo}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_sopralluogo}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_sopralluogo}</Text>
+                                </View>
+                            </View>
+                            <View style={{ bottom: "-30%" }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        pickImage("foto_sopralluogo")
+                                        setModalVisibleSopralluogo(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </Pressable>
