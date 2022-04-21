@@ -481,7 +481,7 @@ export default function ClientCalendar(props) {
                             }
                             <View style={{ marginTop: 10 }}>
                                 <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
-                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data sopralluogo:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_sopralluogo}</Text>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_sopralluogo}</Text>
                                 </View>
                                 <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_sopralluogo}</Text>
@@ -490,7 +490,7 @@ export default function ClientCalendar(props) {
                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_sopralluogo}</Text>
                                 </View>
                             </View>
-                            <View style={{ bottom: "-30%" }}>
+                            <View style={{ bottom: -140 }}>
                                 <Pressable
                                     style={[styles.button, styles.buttonOpen]}
                                     onPress={() => {
@@ -520,39 +520,30 @@ export default function ClientCalendar(props) {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <Title style={styles.modalText}>Installazione</Title>
-                            <View style={{ flexDirection: "row", }}>
-                                <Button onPress={() => {
-                                    setOpenInstallazione(true)
-                                    createImagesToShow(customerSelected.foto_fine_installazione)
-                                    setModalVisibleInstallazione(false)
-                                }}>Apri foto</Button>
-                                <Button onPress={() => {
-                                    pickImage("foto_fine_installazione")
-                                    setModalVisibleInstallazione(false)
-                                }}>Carica foto</Button>
-                            </View>
-                            <View style={{ marginTop: 20 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data installazione: {customerSelected.data_installazione}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_installazione}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Computo (testo): {customerSelected.computo}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_installazione}</Text>
+                            <View style={{ marginTop: 10 }}>
+                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_installazione}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_installazione}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Computo (testo):</Text><Text style={{ marginLeft: 5 }}>{customerSelected.computo}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_installazione}</Text>
+                                </View>
                             </View>
                             {
-                                customerSelected.pdf_computo === undefined ? null : <View>
+                                customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 20 }}>
                                     {
                                         customerSelected.pdf_computo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
                                             <View style={{ marginTop: 20 }}>
                                                 {
                                                     customerSelected.pdf_computo.map((pc, idx) => {
-                                                        return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                        return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 15 }}
                                                             onPress={() => Linking.openURL(pc)}>
-                                                            {"pdf " + (idx + 1)}
+                                                            {pc.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
                                                         </Text>
                                                     })
                                                 }
@@ -560,6 +551,27 @@ export default function ClientCalendar(props) {
                                     }
                                 </View>
                             }
+                            <View style={{ flexDirection: "column", bottom: -60 }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
+                                    onPress={() => {
+                                        setOpenInstallazione(true)
+                                        createImagesToShow(customerSelected.foto_fine_installazione)
+                                        setModalVisibleInstallazione(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        pickImage("foto_fine_installazione")
+                                        setModalVisibleInstallazione(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
                 </Pressable>
@@ -579,25 +591,37 @@ export default function ClientCalendar(props) {
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <Title style={styles.modalText}>Assistenza</Title>
-                            <View style={{ flexDirection: "row", }}>
-                                <Button onPress={() => {
-                                    setOpenAssistenza(true)
-                                    createImagesToShow(customerSelected.foto_assistenza)
-                                    setModalVisibleAssistenza(false)
-                                }}>Apri foto</Button>
-                                <Button onPress={() => {
-                                    pickImage("foto_assistenza")
-                                    setModalVisibleAssistenza(false)
-                                }}>Carica foto</Button>
+                            <View style={{ flexDirection: "columns", }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
+                                    onPress={() => {
+                                        setOpenAssistenza(true)
+                                        createImagesToShow(customerSelected.foto_assistenza)
+                                        setModalVisibleAssistenza(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                </Pressable>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        pickImage("foto_assistenza")
+                                        setModalVisibleAssistenza(false)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                </Pressable>
                             </View>
-                            <View style={{ marginTop: 20 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Data assistenza: {customerSelected.data_assistenza}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Tecnico: {customerSelected.tecnico_assistenza}</Text>
-                            </View>
-                            <View style={{ marginTop: 5 }}>
-                                <Text style={{ color: 'blue', marginBottom: 5 }}>Note: {customerSelected.note_assistenza}</Text>
+                            <View style={{ marginTop: 10 }}>
+                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_assistenza}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_assistenza}</Text>
+                                </View>
+                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_assistenza}</Text>
+                                </View>
                             </View>
                             {
                                 customerSelected.assistenza === undefined ? null : <View>
@@ -606,9 +630,9 @@ export default function ClientCalendar(props) {
                                             <View style={{ marginTop: 20 }}>
                                                 {
                                                     customerSelected.assistenza.map((pi, idx) => {
-                                                        return <Text style={{ color: 'blue', marginBottom: 5 }}
+                                                        return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 15 }}
                                                             onPress={() => Linking.openURL(pi)}>
-                                                            {"pdf " + (idx + 1)}
+                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
                                                         </Text>
                                                     })
                                                 }
