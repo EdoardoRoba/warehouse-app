@@ -1,6 +1,6 @@
 import { axiosInstance, beUrl } from "../config.js"
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, Alert, Linking, ScrollView, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Alert, Linking, SafeAreaView, StatusBar, ScrollView, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
 import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal, List } from 'react-native-paper';
 import ImageView from "react-native-image-viewing";
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
@@ -87,8 +87,8 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
     modalText: {
-        marginTop: 15,
-        marginBottom: 40,
+        // marginTop: 15,
+        marginBottom: 20,
         textAlign: "center"
     },
     outsideModal: {
@@ -110,7 +110,18 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 10,
         right: 0
-    }
+    },
+    scrollView: {
+        // marginHorizontal: 20,
+        // width: "100%",
+    },
+    text: {
+        fontSize: 42,
+    },
+    safeAreaView: {
+        flex: 1,
+        paddingTop: StatusBar.currentHeight,
+    },
 });
 
 export default function ClientCalendar(props) {
@@ -130,9 +141,11 @@ export default function ClientCalendar(props) {
     const [typology, setTypology] = React.useState("");
     const [section, setSection] = React.useState("");
     const [token, setToken] = React.useState("");
+    const [user, setUser] = React.useState("");
     const [modalVisibleSopralluogo, setModalVisibleSopralluogo] = React.useState(false);
     const [modalVisibleInstallazione, setModalVisibleInstallazione] = React.useState(false);
     const [modalVisibleAssistenza, setModalVisibleAssistenza] = React.useState(false);
+    const [modalVisibleDocumenti, setModalVisibleDocumenti] = React.useState(false);
 
     const { navigate } = props.navigation;
 
@@ -173,6 +186,7 @@ export default function ClientCalendar(props) {
 
     const getToken = async () => {
         setToken(await AsyncStorage.getItem("token"))
+        setUser(await AsyncStorage.getItem("user"))
     }
 
     async function uploadImageAsync(ph) {
@@ -268,7 +282,7 @@ export default function ClientCalendar(props) {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
                     <Title style={{ marginTop: 50, fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
-                    <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.telefono}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline" }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
                     <Paragraph onPress={() => {
                         Clipboard.setString(customerSelected.indirizzo + "," + customerSelected.comune + "," + customerSelected.provincia)
                         setShowCopyboard(true)
@@ -286,10 +300,6 @@ export default function ClientCalendar(props) {
                             >
                                 <Text style={styles.textStyle}>Sopralluogo</Text>
                             </Pressable>
-                            {/* <Text style={{ color: 'blue' }}
-                                onPress={() => Linking.openURL('https://firebasestorage.googleapis.com/v0/b/magazzino-2a013.appspot.com/o/files%2Ftizio%20caio%2Fcheck_list_1647886217946?alt=media&token=3990cea6-7638-4cab-8630-0d1f912a7964')}>
-                                Google
-                            </Text> */}
                         </View>
                     </View>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
@@ -304,14 +314,6 @@ export default function ClientCalendar(props) {
                             >
                                 <Text style={styles.textStyle}>Installazione</Text>
                             </Pressable>
-                            {/* <Button onPress={() => {
-                                setOpenInstallazione(true)
-                                createImagesToShow(customerSelected.foto_fine_installazione)
-                            }}>Apri foto</Button>
-                            <Button onPress={() => {
-                                setOpenInstallazione(true)
-                                createImagesToShow(customerSelected.foto_fine_installazione)
-                            }}>Carica foto</Button> */}
                         </View>
                     </View>
                     {
@@ -327,14 +329,21 @@ export default function ClientCalendar(props) {
                                 >
                                     <Text style={styles.textStyle}>Assistenza</Text>
                                 </Pressable>
-                                {/* <Button onPress={() => {
-                                setOpenAssistenza(true)
-                                createImagesToShow(customerSelected.foto_assistenza)
-                            }}>Apri foto</Button>
-                            <Button onPress={() => {
-                                setOpenAssistenza(true)
-                                createImagesToShow(customerSelected.foto_assistenza)
-                            }}>Carica foto</Button> */}
+                            </View>
+                        </View>
+                    }
+                    {
+                        user !== "admin" ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                            <View style={{ flexDirection: "row", }}>
+                                <Pressable
+                                    style={[styles.button, styles.buttonOpen]}
+                                    onPress={() => {
+                                        setSection("documenti")
+                                        setModalVisibleDocumenti(true)
+                                    }}
+                                >
+                                    <Text style={styles.textStyle}>Documenti</Text>
+                                </Pressable>
                             </View>
                         </View>
                     }
@@ -439,17 +448,6 @@ export default function ClientCalendar(props) {
                             setModalVisibleSopralluogo(false);
                         }
                     }} >
-                    {/* <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Hello World!</Text>
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisibleSopralluogo(!modalVisibleSopralluogo)}
-                            >
-                                <Text style={styles.textStyle}>Hide Modal</Text>
-                            </Pressable>
-                        </View>
-                    </View> */}
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
                             <View style={styles.modalHeader}>
@@ -458,7 +456,9 @@ export default function ClientCalendar(props) {
                                 </TouchableOpacity>
                             </View>
                             <Title style={styles.modalText}>Sopralluogo</Title>
-                            <View style={{ maxWidth: 200, alignItems: "center" }}>
+                            <View style={{ maxWidth: "100%", alignItems: "center" }}>
+                                {/* <SafeAreaView style={{ maxHeight: "90%" }}>
+                                    <ScrollView style={styles.scrollView}> */}
                                 <View style={{ flexDirection: "row", }}>
                                     <Pressable
                                         style={[styles.button, styles.buttonOpen]}
@@ -489,17 +489,17 @@ export default function ClientCalendar(props) {
                                 }
                                 <View style={{ marginTop: 10 }}>
                                     <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_sopralluogo}</Text>
+                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Data:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.data_sopralluogo}</Text>
                                     </View>
                                     <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_sopralluogo}</Text>
+                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Tecnico:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.tecnico_sopralluogo}</Text>
                                     </View>
                                     <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_sopralluogo}</Text>
+                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_sopralluogo}</Text>
                                     </View>
                                 </View>
                                 {
-                                    customerSelected.foto_sopralluogo.length > 0 ? null : <View style={{ bottom: -140 }}>
+                                    !customerSelected || !customerSelected.foto_sopralluogo || customerSelected.foto_sopralluogo.length > 0 ? null : <View style={{ bottom: -140 }}>
                                         <Pressable
                                             style={[styles.button, styles.buttonOpen]}
                                             onPress={() => {
@@ -511,6 +511,8 @@ export default function ClientCalendar(props) {
                                         </Pressable>
                                     </View>
                                 }
+                                {/* </ScrollView>
+                                </SafeAreaView> */}
                             </View>
                         </View>
                     </View>
@@ -536,59 +538,65 @@ export default function ClientCalendar(props) {
                                 </TouchableOpacity>
                             </View>
                             <Title style={styles.modalText}>Installazione</Title>
-                            <View style={{ maxWidth: 200, alignItems: "center" }}>
-                                <View style={{ marginTop: 10 }}>
-                                    <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_installazione}</Text>
-                                    </View>
-                                    <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_installazione}</Text>
-                                    </View>
-                                    <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Computo (testo):</Text><Text style={{ marginLeft: 5 }}>{customerSelected.computo}</Text>
-                                    </View>
-                                </View>
-                                {
-                                    customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 10, marginBottom: 10 }}>
-                                        {
-                                            customerSelected.pdf_computo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
-                                                <View style={{ marginTop: 20 }}>
+                            <View>
+                                <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                    <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
+                                        <Pressable style={{ width: 300, alignItems: "center" }}>
+                                            <View style={{ maxWidth: 300 }}>
+                                                <View style={{ marginTop: 10, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20, maxWidth: 300 }}>Data:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.data_installazione}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20, maxWidth: 300 }}>Tecnico:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.tecnico_installazione}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "column", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20, maxWidth: 300 }}>Computo (testo):</Text><Text style={{ fontSize: 20 }}>{customerSelected.computo}</Text>
+                                                </View>
+                                            </View>
+                                            {
+                                                customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 10, marginBottom: 10 }}>
                                                     {
-                                                        customerSelected.pdf_computo.map((pc, idx) => {
-                                                            return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 15 }}
-                                                                onPress={() => Linking.openURL(pc)}>
-                                                                {pc.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
-                                                            </Text>
-                                                        })
+                                                        customerSelected.pdf_computo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                                            <View style={{ marginTop: 20 }}>
+                                                                {
+                                                                    customerSelected.pdf_computo.map((pc, idx) => {
+                                                                        return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pc)}>
+                                                                            {pc.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
                                                     }
                                                 </View>
-                                        }
-                                    </View>
-                                }
-                                <View style={{ marginTop: 10, flexDirection: "row", marginRight: "auto" }}>
-                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_installazione}</Text>
-                                </View>
-                                <View style={{ flexDirection: "column", bottom: -60 }}>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
-                                        onPress={() => {
-                                            setOpenInstallazione(true)
-                                            createImagesToShow(customerSelected.foto_fine_installazione)
-                                            setModalVisibleInstallazione(false)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Apri foto</Text>
-                                    </Pressable>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen]}
-                                        onPress={() => {
-                                            pickImage("foto_fine_installazione")
-                                            setModalVisibleInstallazione(false)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Carica foto</Text>
-                                    </Pressable>
-                                </View>
+                                            }
+                                            <View style={{ marginTop: 10, flexDirection: "row", marginRight: "auto" }}>
+                                                <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_installazione}</Text>
+                                            </View>
+                                            <View style={{ flexDirection: "column", marginTop: 30 }}>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
+                                                    onPress={() => {
+                                                        setOpenInstallazione(true)
+                                                        createImagesToShow(customerSelected.foto_fine_installazione)
+                                                        setModalVisibleInstallazione(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen]}
+                                                    onPress={() => {
+                                                        pickImage("foto_fine_installazione")
+                                                        setModalVisibleInstallazione(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                                </Pressable>
+                                            </View>
+                                        </Pressable>
+                                    </ScrollView>
+                                </SafeAreaView>
                             </View>
                         </View>
                     </View>
@@ -614,56 +622,230 @@ export default function ClientCalendar(props) {
                                 </TouchableOpacity>
                             </View>
                             <Title style={styles.modalText}>Assistenza</Title>
-                            <View style={{ maxWidth: 200, alignItems: "center" }}>
-                                <View style={{ flexDirection: "columns", }}>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
-                                        onPress={() => {
-                                            setOpenAssistenza(true)
-                                            createImagesToShow(customerSelected.foto_assistenza)
-                                            setModalVisibleAssistenza(false)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Apri foto</Text>
-                                    </Pressable>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen]}
-                                        onPress={() => {
-                                            pickImage("foto_assistenza")
-                                            setModalVisibleAssistenza(false)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Carica foto</Text>
-                                    </Pressable>
-                                </View>
-                                <View style={{ marginTop: 10 }}>
-                                    <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Data:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.data_assistenza}</Text>
-                                    </View>
-                                    <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Tecnico:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.tecnico_assistenza}</Text>
-                                    </View>
-                                    <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_assistenza}</Text>
-                                    </View>
-                                </View>
-                                {
-                                    customerSelected.assistenza === undefined ? null : <View>
-                                        {
-                                            customerSelected.assistenza.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
-                                                <View style={{ marginTop: 20 }}>
+                            <View>
+                                <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                    <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
+                                        <Pressable>
+                                            <View style={{ flexDirection: "columns", }}>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
+                                                    onPress={() => {
+                                                        setOpenAssistenza(true)
+                                                        createImagesToShow(customerSelected.foto_assistenza)
+                                                        setModalVisibleAssistenza(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen]}
+                                                    onPress={() => {
+                                                        pickImage("foto_assistenza")
+                                                        setModalVisibleAssistenza(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                                </Pressable>
+                                            </View>
+                                            <View style={{ marginTop: 10 }}>
+                                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Data:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.data_assistenza}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Tecnico:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.tecnico_assistenza}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_assistenza}</Text>
+                                                </View>
+                                            </View>
+                                            {
+                                                customerSelected.assistenza === undefined ? null : <View>
                                                     {
-                                                        customerSelected.assistenza.map((pi, idx) => {
-                                                            return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 15 }}
-                                                                onPress={() => Linking.openURL(pi)}>
-                                                                {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
-                                                            </Text>
-                                                        })
+                                                        customerSelected.assistenza.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                                            <View style={{ marginTop: 20 }}>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
                                                     }
                                                 </View>
-                                        }
-                                    </View>
-                                }
+                                            }
+                                        </Pressable>
+                                    </ScrollView>
+                                </SafeAreaView>
+                            </View>
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                visible={modalVisibleDocumenti}
+                onRequestClose={() => setModalVisibleDocumenti(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setModalVisibleDocumenti(false);
+                        }
+                    }} >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setModalVisibleDocumenti(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
+                            <Title style={styles.modalText}>Documenti</Title>
+                            <View>
+                                <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                    <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
+                                        <Pressable>
+                                            <View>
+                                                <View style={{ marginTop: 15, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Pagamenti (testo):</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.pagamenti_testo}</Text>
+                                                </View>
+                                            </View>
+                                            {
+                                                customerSelected.pagamenti_pdf === undefined ? null : <View style={{ marginTop: 20 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Pagamenti (pdf):</Text>
+                                                    {
+                                                        customerSelected.pagamenti_pdf.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            {
+                                                customerSelected.trasferta === undefined ? null : <View style={{ marginTop: 10 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Trasferta:</Text>
+                                                    {
+                                                        customerSelected.trasferta.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            {
+                                                customerSelected.collaudo === undefined ? null : <View style={{ marginTop: 10 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Collaudo:</Text>
+                                                    {
+                                                        customerSelected.collaudo.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            {
+                                                customerSelected.check_list === undefined ? null : <View style={{ marginTop: 10 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Check list:</Text>
+                                                    {
+                                                        customerSelected.check_list.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            {
+                                                customerSelected.fgas === undefined ? null : <View style={{ marginTop: 10 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Fgas:</Text>
+                                                    {
+                                                        customerSelected.fgas.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            {
+                                                customerSelected.prova_fumi === undefined ? null : <View style={{ marginTop: 10 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Prova fumi:</Text>
+                                                    {
+                                                        customerSelected.prova_fumi.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            {
+                                                customerSelected.di_co === undefined ? null : <View style={{ marginTop: 10 }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>di.co:</Text>
+                                                    {
+                                                        customerSelected.fgas.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
+                                                            <View>
+                                                                {
+                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                            <View style={{ marginTop: 10 }}>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_pagamenti}</Text>
+                                                </View>
+                                            </View>
+                                        </Pressable>
+                                    </ScrollView>
+                                </SafeAreaView>
                             </View>
                         </View>
                     </View>

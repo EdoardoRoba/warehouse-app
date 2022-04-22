@@ -78,6 +78,7 @@ export default function Login({ navigation }) {
                 setUsername("")
                 setPassword("")
                 AsyncStorage.setItem("token", response.data.token)
+                AsyncStorage.setItem("user", username)
                 navigation.navigate("Route", { user: usr })
             }).catch(error => {
                 setIsLoading(false)
