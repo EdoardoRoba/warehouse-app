@@ -7,6 +7,7 @@ import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, up
 import { storage } from "../firebase";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Clipboard from "expo-clipboard";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const styles = StyleSheet.create({
     container: {
@@ -56,12 +57,6 @@ const styles = StyleSheet.create({
         // margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        // padding: 100,
-        // paddingBottom: 100,
-        // paddingTop: 100,
-        // paddingVertical: 200,
-        // paddingHorizontal: 120,
-        // justifyContent:"center",
         height: "90%",
         width: "95%",
         alignItems: "center",
@@ -99,6 +94,22 @@ const styles = StyleSheet.create({
     outsideModal: {
         backgroundColor: "transparent",
         flex: 1,
+    },
+    modalHeader: {
+        flexDirection: "row",
+        textAlign: "right",
+        marginTop: 10
+    },
+    /* The header takes up all the vertical space not used by the close button. */
+    modalHeaderContent: {
+        flexGrow: 1,
+        textAlign: "right"
+    },
+    modalHeaderCloseText: {
+        textAlign: "right",
+        paddingLeft: 5,
+        paddingRight: 10,
+        right: 0
     }
 });
 
@@ -441,6 +452,11 @@ export default function ClientCalendar(props) {
                     </View> */}
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setModalVisibleSopralluogo(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
                             <Title style={styles.modalText}>Sopralluogo</Title>
                             <View style={{ maxWidth: 200, alignItems: "center" }}>
                                 <View style={{ flexDirection: "row", }}>
@@ -512,6 +528,11 @@ export default function ClientCalendar(props) {
                     }} >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setModalVisibleInstallazione(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
                             <Title style={styles.modalText}>Installazione</Title>
                             <View style={{ maxWidth: 200, alignItems: "center" }}>
                                 <View style={{ marginTop: 10 }}>
@@ -585,6 +606,11 @@ export default function ClientCalendar(props) {
                     }} >
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setModalVisibleAssistenza(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
                             <Title style={styles.modalText}>Assistenza</Title>
                             <View style={{ maxWidth: 200, alignItems: "center" }}>
                                 <View style={{ flexDirection: "columns", }}>
