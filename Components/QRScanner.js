@@ -117,8 +117,8 @@ export default function QRScanner({ user }) {
 
     // What happens when we scan the bar code
     const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true);
         setUrl(data)
+        setScanned(true);
         // console.log('Type: ' + type + '\nData: ' + data)
     };
 
@@ -141,11 +141,19 @@ export default function QRScanner({ user }) {
                 axiosInstance.post(beUrl + 'history/' + toolFound.label.replaceAll("/", "%47"), upds, { headers: { "Authorization": `Bearer ${token}` } })
                     .then(response => {
                         console.log("History added!")
+                        const timer = setTimeout(() => {
+                            setToolFound(null)
+                        }, 300);
                         setIsLoading(false)
+                        return () => clearTimeout(timer);
                     }).catch(error => {
+                        const timer = setTimeout(() => {
+                            setToolFound(null)
+                        }, 300);
                         setShowError(true)
                         setIsLoading(false)
                         console.log(error)
+                        return () => clearTimeout(timer);
                     });
             }).catch((err) => {
                 setIsLoading(false)
@@ -192,7 +200,7 @@ export default function QRScanner({ user }) {
             }
             {
                 (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <View style={{ width: "80%" }}>
-                    {toolFound.label === undefined ? null :
+                    {!toolFound || toolFound.label === undefined ? null :
                         <SafeAreaView style={{ marginTop: 30, width: "100%" }}>
                             <Card>
                                 <Card.Title title={toolFound.label.toUpperCase()} />

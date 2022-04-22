@@ -498,17 +498,19 @@ export default function ClientCalendar(props) {
                                         <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_sopralluogo}</Text>
                                     </View>
                                 </View>
-                                <View style={{ bottom: -140 }}>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen]}
-                                        onPress={() => {
-                                            pickImage("foto_sopralluogo")
-                                            setModalVisibleSopralluogo(false)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Carica foto</Text>
-                                    </Pressable>
-                                </View>
+                                {
+                                    customerSelected.foto_sopralluogo.length > 0 ? null : <View style={{ bottom: -140 }}>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                pickImage("foto_sopralluogo")
+                                                setModalVisibleSopralluogo(false)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Carica foto</Text>
+                                        </Pressable>
+                                    </View>
+                                }
                             </View>
                         </View>
                     </View>
@@ -545,12 +547,9 @@ export default function ClientCalendar(props) {
                                     <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
                                         <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Computo (testo):</Text><Text style={{ marginLeft: 5 }}>{customerSelected.computo}</Text>
                                     </View>
-                                    <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
-                                        <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_installazione}</Text>
-                                    </View>
                                 </View>
                                 {
-                                    customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 20 }}>
+                                    customerSelected.pdf_computo === undefined ? null : <View style={{ marginTop: 10, marginBottom: 10 }}>
                                         {
                                             customerSelected.pdf_computo.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
                                                 <View style={{ marginTop: 20 }}>
@@ -566,6 +565,9 @@ export default function ClientCalendar(props) {
                                         }
                                     </View>
                                 }
+                                <View style={{ marginTop: 10, flexDirection: "row", marginRight: "auto" }}>
+                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 15 }}>Note:</Text><Text style={{ marginLeft: 5 }}>{customerSelected.note_installazione}</Text>
+                                </View>
                                 <View style={{ flexDirection: "column", bottom: -60 }}>
                                     <Pressable
                                         style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
