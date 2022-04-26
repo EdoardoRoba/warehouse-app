@@ -2,12 +2,14 @@ import { axiosInstance, beUrl } from "../config.js"
 import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, Alert, Linking, SafeAreaView, StatusBar, ScrollView, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
 import { Menu, Card, Button, Title, Paragraph, Provider, Dialog, Portal, List } from 'react-native-paper';
-import ImageView from "react-native-image-viewing";
+// import ImageView from "react-native-image-viewing";
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Clipboard from "expo-clipboard";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import GridImageView from 'react-native-grid-image-viewer';
+import { vw, vh, vmin, vmax } from 'react-native-expo-viewport-units';
 
 const styles = StyleSheet.create({
     container: {
@@ -57,8 +59,8 @@ const styles = StyleSheet.create({
         // margin: 20,
         backgroundColor: "white",
         borderRadius: 20,
-        height: "90%",
-        width: "95%",
+        height: vh(85),
+        width: vw(90),
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
@@ -364,11 +366,11 @@ export default function ClientCalendar(props) {
                 (customerSelected === undefined || customerSelected.foto_sopralluogo === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openSopralluogo} onDismiss={() => { setOpenSopralluogo(false) }} style={{ height: "100%" }}>
-                            <Dialog.ScrollArea>
+                            {/* <Dialog.ScrollArea>
                                 <ScrollView>
                                     {
-                                        customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            {/* {
+                                        customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}> */}
+                            {/* {
                                                 customerSelected.foto_sopralluogo.map(s => {
                                                     return <View>
                                                         <Image
@@ -378,7 +380,7 @@ export default function ClientCalendar(props) {
                                                     </View>
                                                 })
                                             } */}
-                                            <ImageView
+                            {/* <ImageView
                                                 images={fotosToShow}
                                                 imageIndex={0}
                                                 visible={openSopralluogo}
@@ -387,7 +389,10 @@ export default function ClientCalendar(props) {
                                         </View>
                                     }
                                 </ScrollView >
-                            </Dialog.ScrollArea>
+                            </Dialog.ScrollArea> */}
+                            {
+                                customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_sopralluogo} visible={openSopralluogo} />
+                            }
                         </Dialog>
                     </Portal>
                 </Provider>
@@ -397,7 +402,7 @@ export default function ClientCalendar(props) {
                 (customerSelected === undefined || customerSelected.foto_fine_installazione === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openInstallazione} onDismiss={() => { setOpenInstallazione(false) }} style={{ height: "100%" }}>
-                            <Dialog.ScrollArea>
+                            {/* <Dialog.ScrollArea>
                                 <ScrollView>
                                     {
                                         customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
@@ -410,7 +415,10 @@ export default function ClientCalendar(props) {
                                         </View>
                                     }
                                 </ScrollView>
-                            </Dialog.ScrollArea>
+                            </Dialog.ScrollArea> */}
+                            {
+                                customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_fine_installazione} visible={openInstallazione} />
+                            }
                         </Dialog>
                     </Portal>
                 </Provider>
@@ -419,7 +427,7 @@ export default function ClientCalendar(props) {
                 (customerSelected === undefined || customerSelected.foto_assistenza === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%", justifyContent: 'center', alignItems: 'center' }}>
-                            <Dialog.ScrollArea>
+                            {/* <Dialog.ScrollArea>
                                 <ScrollView>
                                     {
                                         customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text style={{ justifyContent: 'center', alignItems: 'center' }}>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
@@ -432,7 +440,10 @@ export default function ClientCalendar(props) {
                                         </View>
                                     }
                                 </ScrollView>
-                            </Dialog.ScrollArea>
+                            </Dialog.ScrollArea> */}
+                            {
+                                customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_assistenza} visible={openAssistenza} />
+                            }
                         </Dialog>
                     </Portal>
                 </Provider>
