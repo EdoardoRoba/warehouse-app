@@ -199,11 +199,12 @@ export default function QRScanner({ user }) {
                 </View>
             }
             {
-                (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <View style={{ width: "80%" }}>
+                (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <View style={{ width: "90%" }}>
                     {!toolFound || toolFound.label === undefined ? null :
                         <SafeAreaView style={{ marginTop: 30, width: "100%" }}>
-                            <Card>
-                                <Card.Title title={toolFound.label.toUpperCase()} />
+                            <Card style={{ width: "100%" }}>
+                                <Card.Title titleStyle={{ fontSize: 14 }} title={toolFound.label.toUpperCase()} />
+                                {/* <Text style={{ fontSize: 14, fontWeight: 'bold' }}>{toolFound.label.toUpperCase()}</Text> */}
                                 <Card.Content>
                                     <Title style={{ fontSize: 15 }}>quantità attuale</Title>
                                     <Paragraph style={{ fontSize: 12 }}>{toolFound.quantity}</Paragraph>
