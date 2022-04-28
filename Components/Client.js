@@ -301,17 +301,6 @@ export default function Client(props) {
                             justifyContent: 'center',
                         }}>
                         <Text>Seleziona cliente</Text>
-                        {/* <Portal>
-                            <Dialog visible={visible} onDismiss={() => { closeMenu() }} style={{ height: 500, justifyContent: 'center', alignItems: 'center' }}>
-                                <Dialog.ScrollArea>
-                                    <ScrollView>
-                                        {customers.map(c => {
-                                            return <Menu.Item onPress={() => { openCustomer(c) }} key={c.nome_cognome} title={c.nome_cognome} />
-                                        })}
-                                    </ScrollView>
-                                </Dialog.ScrollArea>
-                            </Dialog>
-                        </Portal> */}
                         <AutocompleteDropdown
                             clearOnFocus={false}
                             closeOnBlur={true}
@@ -359,6 +348,7 @@ export default function Client(props) {
                         setShowCopyboard(true)
                     }}
                         style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 15 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         <View style={{ flexDirection: "row", }}>
                             <Pressable
@@ -432,31 +422,6 @@ export default function Client(props) {
                 (customerSelected === undefined || customerSelected.foto_sopralluogo === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openSopralluogo} onDismiss={() => { setOpenSopralluogo(false) }} style={{ height: "100%" }}>
-                            {/* <Dialog.ScrollArea>
-                                <ScrollView>
-                                    {
-                                        customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}> */}
-                            {/* {
-                                                customerSelected.foto_sopralluogo.map(s => {
-                                                    return <View>
-                                                        <Image
-                                                            source={{ uri: s }}
-                                                            style={{ height: 250, width: 300, marginTop: 3 }}
-                                                        />
-                                                    </View>
-                                                })
-                                            } */}
-                            {/* <ImageView
-                                                images={fotosToShow}
-                                                imageIndex={0}
-                                                visible={openSopralluogo}
-                                                onRequestClose={() => setOpenSopralluogo(false)}
-                                            /> */}
-                            {/* <GridImageView data={fotosToShow} visible={openSopralluogo} />
-                                        </View>
-                                    }
-                                </ScrollView >
-                            </Dialog.ScrollArea> */}
                             {
                                 customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_sopralluogo} visible={openSopralluogo} />
                             }
@@ -469,20 +434,6 @@ export default function Client(props) {
                 (customerSelected === undefined || customerSelected.foto_fine_installazione === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openInstallazione} onDismiss={() => { setOpenInstallazione(false) }} style={{ height: "100%" }}>
-                            {/* <Dialog.ScrollArea>
-                                <ScrollView>
-                                    {
-                                        customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            <ImageView
-                                                images={fotosToShow}
-                                                imageIndex={0}
-                                                visible={openInstallazione}
-                                                onRequestClose={() => setOpenInstallazione(false)}
-                                            />
-                                        </View>
-                                    }
-                                </ScrollView>
-                            </Dialog.ScrollArea> */}
                             {
                                 customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_fine_installazione} visible={openInstallazione} />
                             }
@@ -494,20 +445,6 @@ export default function Client(props) {
                 (customerSelected === undefined || customerSelected.foto_assistenza === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%", justifyContent: 'center', alignItems: 'center' }}>
-                            {/* <Dialog.ScrollArea>
-                                <ScrollView>
-                                    {
-                                        customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 100 }}><Text style={{ justifyContent: 'center', alignItems: 'center' }}>Non sono presenti foto.</Text></View> : <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
-                                            <ImageView
-                                                images={fotosToShow}
-                                                imageIndex={0}
-                                                visible={openAssistenza}
-                                                onRequestClose={() => setOpenAssistenza(false)}
-                                            />
-                                        </View>
-                                    }
-                                </ScrollView>
-                            </Dialog.ScrollArea> */}
                             {
                                 customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_assistenza} visible={openAssistenza} />
                             }
