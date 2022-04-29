@@ -175,10 +175,10 @@ export default function Client(props) {
     }, [props]);
 
     React.useEffect(() => {
-        if (token) {
-            getCustomers();
+        if (token && user) {
+            checkUserExternal();
         }
-    }, [token]);
+    }, [token, user]);
 
     React.useEffect(() => {
         const timer = setTimeout(() => {
@@ -190,6 +190,30 @@ export default function Client(props) {
     const getToken = async () => {
         setToken(await AsyncStorage.getItem("token"))
         setUser(await AsyncStorage.getItem("user"))
+    }
+
+    const checkUserExternal = () => {
+        setIsLoading(true)
+        if (user !== "admin") {
+            axiosInstance.get(beUrl + 'employeeIsExternal', { headers: { "Authorization": `Bearer ${token}` }, params: { user: user } }) // { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } }
+                .then(res => {
+                    if (res.data) {
+                        getCustomers(user)
+                    } else {
+                        getCustomers()
+                    }
+                }).catch(error => {
+                    // console.log("error")
+                    // console.log(error)
+                    if (error.response.status === 401) {
+                        userIsAuthenticated()
+                    }
+                    setIsLoading(false)
+                    setShowError(true)
+                });
+        } else {
+            getCustomers()
+        }
     }
 
     async function uploadImageAsync(ph) {
@@ -246,26 +270,71 @@ export default function Client(props) {
         return () => clearTimeout(timer);
     }, [showError]);
 
-    const getCustomers = () => {
+    const getCustomers = (user) => {
         setIsLoading(true)
-        axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` } })
-            .then(res => {
-                let custs = res.data
-                custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
-                let ds = res.data.map((cust) => ({
-                    id: cust.nome_cognome,
-                    title: cust.nome_cognome,
-                    customerSelected: cust
-                }))
-                setDataset(ds)
-                // console.log("Tools: ", res.data)
-                setCustomers(custs)
-                setIsLoading(false)
-            }).catch(error => {
-                setIsLoading(false)
-                console.log("Customer not found")
-                setShowError(true)
-            });
+        // axiosInstance.get(beUrl + 'employeeIsExternal', { headers: { "Authorization": `Bearer ${token}` } }).then(()=>{
+        //     axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` } })
+        //         .then(res => {
+        //             let custs = res.data
+        //             custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
+        //             let ds = res.data.map((cust) => ({
+        //                 id: cust.nome_cognome,
+        //                 title: cust.nome_cognome,
+        //                 customerSelected: cust
+        //             }))
+        //             setDataset(ds)
+        //             // console.log("Tools: ", res.data)
+        //             setCustomers(custs)
+        //             setIsLoading(false)
+        //         }).catch(error => {
+        //             setIsLoading(false)
+        //             console.log("Customer not found")
+        //             setShowError(true)
+        //         });
+        // }).catch(()=>{
+        //     setIsLoading(false)
+        //     console.log("Error")
+        //     setShowError(true)
+        // })
+        if (user === undefined) {
+            axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` } })
+                .then(res => {
+                    let custs = res.data
+                    custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
+                    let ds = res.data.map((cust) => ({
+                        id: cust.nome_cognome,
+                        title: cust.nome_cognome,
+                        customerSelected: cust
+                    }))
+                    setDataset(ds)
+                    // console.log("Tools: ", res.data)
+                    setCustomers(custs)
+                    setIsLoading(false)
+                }).catch(error => {
+                    setIsLoading(false)
+                    console.log("Customer not found")
+                    setShowError(true)
+                })
+        } else {
+            axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` }, params: { user: user } })
+                .then(res => {
+                    let custs = res.data
+                    custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
+                    let ds = res.data.map((cust) => ({
+                        id: cust.nome_cognome,
+                        title: cust.nome_cognome,
+                        customerSelected: cust
+                    }))
+                    setDataset(ds)
+                    // console.log("Tools: ", res.data)
+                    setCustomers(custs)
+                    setIsLoading(false)
+                }).catch(error => {
+                    setIsLoading(false)
+                    console.log("Customer not found")
+                    setShowError(true)
+                })
+        }
     }
 
     const openCustomer = (c) => {
@@ -577,7 +646,7 @@ export default function Client(props) {
                                                                     customerSelected.pdf_computo.map((pc, idx) => {
                                                                         return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pc)}>
-                                                                            {pc.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pc.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -682,7 +751,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -737,7 +806,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -755,7 +824,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -773,7 +842,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -791,7 +860,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -809,7 +878,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -827,7 +896,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -845,7 +914,7 @@ export default function Client(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }

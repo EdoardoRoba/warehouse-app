@@ -290,6 +290,7 @@ export default function ClientCalendar(props) {
                         setShowCopyboard(true)
                     }}
                         style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 15 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
                     <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
                         <View style={{ flexDirection: "row", }}>
@@ -573,7 +574,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.pdf_computo.map((pc, idx) => {
                                                                         return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pc)}>
-                                                                            {pc.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pc.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -678,7 +679,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -733,7 +734,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -751,7 +752,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -769,7 +770,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -787,7 +788,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -805,7 +806,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -823,7 +824,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
@@ -841,7 +842,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replaceAll("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
