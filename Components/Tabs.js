@@ -59,7 +59,9 @@ export default function Tabs({ user }) {
             {
                 user !== "admin" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
             }
-            <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
+            {
+                user === "surra" ? null : <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
+            }
             <Tab.Screen name="Clienti" children={() => <HomeClient user={user} />} />
             <Tab.Screen name="Calendario" children={() => <HomeCalendar user={user} />} />
         </Tab.Navigator >

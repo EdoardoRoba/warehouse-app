@@ -427,7 +427,7 @@ export default function ClientCalendar(props) {
             {
                 (customerSelected === undefined || customerSelected.foto_assistenza === undefined) ? null : <Provider>
                     <Portal>
-                        <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%", justifyContent: 'center', alignItems: 'center' }}>
+                        <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%" }}>
                             {/* <Dialog.ScrollArea>
                                 <ScrollView>
                                     {

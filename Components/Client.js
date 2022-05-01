@@ -350,6 +350,7 @@ export default function Client(props) {
             fts.uri = f
             ftss.push(fts)
         }
+        // console.log(ftss)
         setFotosToShow(ftss)
     }
 
@@ -513,7 +514,7 @@ export default function Client(props) {
             {
                 (customerSelected === undefined || customerSelected.foto_assistenza === undefined) ? null : <Provider>
                     <Portal>
-                        <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%", justifyContent: 'center', alignItems: 'center' }}>
+                        <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%" }}>
                             {
                                 customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_assistenza} visible={openAssistenza} />
                             }
