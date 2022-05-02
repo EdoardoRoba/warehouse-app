@@ -66,7 +66,7 @@ export default function ImageBrowserScreen(props) {
         <View style={[styles.flex, styles.container]}>
             <Text>Scegli foto</Text>
             <ImageBrowser
-                max={10}
+                max={5}
                 onChange={updateHandler}
                 callback={imagesCallback}
                 renderSelectedComponent={renderSelectedComponent}

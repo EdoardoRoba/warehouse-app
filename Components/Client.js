@@ -10,6 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import GridImageView from 'react-native-grid-image-viewer';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import { FlatGrid } from 'react-native-super-grid';
 import { vw, vh, vmin, vmax } from 'react-native-expo-viewport-units';
 
 const styles = StyleSheet.create({
@@ -124,6 +126,35 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: StatusBar.currentHeight,
     },
+    box: {
+        width: 50,
+        height: 50,
+    },
+    row: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    selected: {
+        backgroundColor: "coral",
+        borderWidth: 0,
+    },
+    buttonLabel: {
+        fontSize: 12,
+        fontWeight: "500",
+        color: "coral",
+    },
+    selectedLabel: {
+        color: "white",
+    },
+    label: {
+        textAlign: "center",
+        marginBottom: 10,
+        fontSize: 24,
+    },
+    tinyLogo: {
+        width: 90,
+        height: 90,
+    },
 });
 
 export default function Client(props) {
@@ -148,6 +179,10 @@ export default function Client(props) {
     const [modalVisibleInstallazione, setModalVisibleInstallazione] = React.useState(false);
     const [modalVisibleAssistenza, setModalVisibleAssistenza] = React.useState(false);
     const [modalVisibleDocumenti, setModalVisibleDocumenti] = React.useState(false);
+    const [singleImage, setSingleImage] = React.useState("");
+    const [allImages, setAllImages] = React.useState([]);
+    const [openPhotos, setOpenPhotos] = React.useState(false);
+    const [modalImages, setModalImages] = React.useState(false);
     const [dataset, setDataset] = React.useState(null)
 
     const { navigate } = props.navigation;
@@ -359,6 +394,21 @@ export default function Client(props) {
         navigate('ImageBrowser')
     };
 
+    const transformImageToUrls = (imgs) => {
+        return imgs.map((i) => {
+            let im = {}
+            im.url = i
+            return im
+        })
+    }
+
+    const imagesToShow = (images, image) => {
+        // console.log(idx)
+        setAllImages(images)
+        setSingleImage(image)
+        setOpenPhotos(true)
+    }
+
     return (
         <View style={styles.container}>
             {/* <Text style={{ marginTop: 10 }}>Welcome in client section!</Text> */}
@@ -493,30 +543,80 @@ export default function Client(props) {
                     <Portal>
                         <Dialog visible={openSopralluogo} onDismiss={() => { setOpenSopralluogo(false) }} style={{ height: "100%" }}>
                             {
-                                customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_sopralluogo} visible={openSopralluogo} />
+                                customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_sopralluogo} visible={openSopralluogo} />
+                                    <FlatGrid
+                                        itemDimension={80}
+                                        data={customerSelected.foto_sopralluogo}
+                                        renderItem={(i) => {
+                                            return <Pressable
+                                                onPress={() => imagesToShow(customerSelected.foto_sopralluogo, i.item)}
+                                            >
+                                                <Image
+                                                    style={styles.tinyLogo}
+                                                    source={{ uri: i.item }}
+                                                />
+                                            </Pressable>
+                                        }}
+                                    />
                             }
                         </Dialog>
                     </Portal>
                 </Provider>
             }
-
             {
                 (customerSelected === undefined || customerSelected.foto_fine_installazione === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openInstallazione} onDismiss={() => { setOpenInstallazione(false) }} style={{ height: "100%" }}>
                             {
-                                customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_fine_installazione} visible={openInstallazione} />
+                                customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : //<GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_fine_installazione} visible={openInstallazione} onPress={() => console.log("ciao")} renderModalImage={(is) => imagesToShow(is, customerSelected.foto_fine_installazione.indexOf(is))} />
+                                    <FlatGrid
+                                        itemDimension={80}
+                                        data={customerSelected.foto_fine_installazione}
+                                        renderItem={(i) => {
+                                            return <Pressable
+                                                onPress={() => imagesToShow(customerSelected.foto_fine_installazione, i.item)}
+                                            >
+                                                <Image
+                                                    style={styles.tinyLogo}
+                                                    source={{ uri: i.item }}
+                                                />
+                                            </Pressable>
+                                        }}
+                                    />
                             }
                         </Dialog>
                     </Portal>
                 </Provider>
+            }
+            {
+                !openPhotos ? null : <Modal visible={modalImages} transparent={true}>
+                    <ImageViewer index={allImages.indexOf(singleImage)} enableSwipeDown={true} onSwipeDown={() => {
+                        setSingleImage("")
+                        setAllImages([])
+                        setOpenPhotos(false)
+                    }} imageUrls={transformImageToUrls(allImages)} />
+                </Modal>
             }
             {
                 (customerSelected === undefined || customerSelected.foto_assistenza === undefined) ? null : <Provider>
                     <Portal>
                         <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%" }}>
                             {
-                                customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : <GridImageView transparent={1} data={customerSelected.foto_assistenza} visible={openAssistenza} />
+                                customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_assistenza} visible={openAssistenza} />
+                                    <FlatGrid
+                                        itemDimension={80}
+                                        data={customerSelected.foto_assistenza}
+                                        renderItem={(i) => {
+                                            return <Pressable
+                                                onPress={() => imagesToShow(customerSelected.foto_assistenza, i.item)}
+                                            >
+                                                <Image
+                                                    style={styles.tinyLogo}
+                                                    source={{ uri: i.item }}
+                                                />
+                                            </Pressable>
+                                        }}
+                                    />
                             }
                         </Dialog>
                     </Portal>
@@ -548,6 +648,7 @@ export default function Client(props) {
                                     <Pressable
                                         style={[styles.button, styles.buttonOpen]}
                                         onPress={() => {
+                                            setModalImages(true)
                                             setOpenSopralluogo(true)
                                             createImagesToShow(customerSelected.foto_sopralluogo)
                                             setModalVisibleSopralluogo(false)
@@ -584,18 +685,20 @@ export default function Client(props) {
                                     </View>
                                 </View>
                                 {
-                                    !customerSelected || !customerSelected.foto_sopralluogo || customerSelected.foto_sopralluogo.length > 0 ? null : <View style={{ bottom: -140 }}>
-                                        <Pressable
-                                            style={[styles.button, styles.buttonOpen]}
-                                            onPress={() => {
-                                                pickImage("foto_sopralluogo")
-                                                setModalVisibleSopralluogo(false)
-                                            }}
-                                        >
-                                            <Text style={styles.textStyle}>Carica foto</Text>
-                                        </Pressable>
-                                    </View>
+                                    !customerSelected || !customerSelected.foto_sopralluogo || customerSelected.foto_sopralluogo.length === 0 ? null :
+                                        <Text style={{ bottom: -130, color: "red" }}>Attenzione: sono già presenti delle immagini di sopralluogo.</Text>
                                 }
+                                <View style={{ bottom: -140 }}>
+                                    <Pressable
+                                        style={[styles.button, styles.buttonOpen]}
+                                        onPress={() => {
+                                            pickImage("foto_sopralluogo")
+                                            setModalVisibleSopralluogo(false)
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>Carica foto</Text>
+                                    </Pressable>
+                                </View>
                                 {/* </ScrollView>
                                 </SafeAreaView> */}
                             </View>
@@ -662,6 +765,7 @@ export default function Client(props) {
                                                 <Pressable
                                                     style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
                                                     onPress={() => {
+                                                        setModalImages(true)
                                                         setOpenInstallazione(true)
                                                         createImagesToShow(customerSelected.foto_fine_installazione)
                                                         setModalVisibleInstallazione(false)
@@ -715,6 +819,7 @@ export default function Client(props) {
                                                 <Pressable
                                                     style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
                                                     onPress={() => {
+                                                        setModalImages(true)
                                                         setOpenAssistenza(true)
                                                         createImagesToShow(customerSelected.foto_assistenza)
                                                         setModalVisibleAssistenza(false)
