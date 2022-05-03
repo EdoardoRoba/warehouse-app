@@ -13,6 +13,7 @@ import GridImageView from 'react-native-grid-image-viewer';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { FlatGrid } from 'react-native-super-grid';
 import { vw, vh, vmin, vmax } from 'react-native-expo-viewport-units';
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 const styles = StyleSheet.create({
     container: {
@@ -220,6 +221,12 @@ export default function Client(props) {
                 // await uploadImageAsync(s)
             }
             finished = await Promise.allSettled(finished)
+            showMessage({
+                message: "Foto caricate correttamente!",
+                type: "info",
+                backgroundColor: "green",
+                color: "white"
+            });
             // console.log(finished)
             // }
             // let arrayPhotos = props.route.params.photos
@@ -449,6 +456,7 @@ export default function Client(props) {
             {/* <Text style={{ marginTop: 10 }}>Welcome in client section!</Text> */}
             {
                 customers === null ? null : <Provider>
+                    <FlashMessage position="top" style={{ zIndex: 1000 }} />
                     <View
                         style={{
                             marginTop: 20,

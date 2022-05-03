@@ -12,6 +12,7 @@ import GridImageView from 'react-native-grid-image-viewer';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { FlatGrid } from 'react-native-super-grid';
 import { vw, vh, vmin, vmax } from 'react-native-expo-viewport-units';
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 const styles = StyleSheet.create({
     container: {
@@ -222,6 +223,12 @@ export default function ClientCalendar(props) {
                 // uploadImageAsync(s)
             }
             finished = await Promise.allSettled(finished)
+            showMessage({
+                message: "Foto caricate correttamente!",
+                type: "info",
+                backgroundColor: "green",
+                color: "white"
+            });
             // }
             props.route.params = {}
         }
@@ -363,6 +370,7 @@ export default function ClientCalendar(props) {
             {/* <Text style={{ marginTop: 10 }}>Welcome in client section!</Text> */}
             {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
+                    <FlashMessage position="top" style={{ zIndex: 1000 }} />
                     <Title style={{ marginTop: 50, fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline" }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
