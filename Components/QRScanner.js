@@ -173,7 +173,7 @@ export default function QRScanner({ user }) {
                     color: "white"
                 });
                 var upds = { user: user, tool: toolFound.label, totalQuantity: toolFound.quantity + diff, update: diff }
-                axiosInstance.post(beUrl + 'history/' + toolFound.label.replaceAll("/", "%47"), upds, { headers: { "Authorization": `Bearer ${token}` } })
+                axiosInstance.post(beUrl + 'history/' + toolFound.label.replace("/", "%47").replace("/", "%47").replace("/", "%47").replace("/", "%47").replace("/", "%47"), upds, { headers: { "Authorization": `Bearer ${token}` } })
                     .then(response => {
                         console.log("History added!")
                         const timer = setTimeout(() => {
