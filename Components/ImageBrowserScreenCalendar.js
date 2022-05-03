@@ -66,7 +66,7 @@ export default function ImageBrowserScreenCalendar(props) {
         <View style={[styles.flex, styles.container]}>
             <Text>Scegli foto</Text>
             <ImageBrowser
-                max={5}
+                max={8}
                 onChange={updateHandler}
                 callback={imagesCallback}
                 renderSelectedComponent={renderSelectedComponent}

@@ -187,20 +187,47 @@ export default function Client(props) {
 
     const { navigate } = props.navigation;
 
+    const PromiseHelperAllSettled = (promises) => {
+        return Promise.all(promises.map(function (promise) {
+            return promise.then(function (value) {
+                return { state: 'fulfilled', value: value };
+            }).catch(function (reason) {
+                return { state: 'rejected', reason: reason };
+            });
+        }));
+    };
+
     React.useEffect(() => {
         setImage(null);
         getToken()
+        if (Promise && !Promise.allSettled) {
+            Promise.allSettled = PromiseHelperAllSettled;
+        }
     }, []);
 
-    React.useEffect(() => {
+    React.useEffect(async () => {
         setIsLoading(true)
         if (props.route.params !== undefined && props.route.params.photos !== undefined) {
             var customer = {}
             customer[typology] = customerSelected[typology]
-            for (let s of props.route.params.photos) {
-                // console.log(s)
-                uploadImageAsync(s)
+            let phs = props.route.params.photos
+            while (phs.length) {
+                // console.log(phs.splice(0, 4));
+                let finished = []
+                for (let s of phs.splice(0, 4)) {
+                    // console.log(s)
+                    finished.push(uploadImageAsync(s))
+                    // await uploadImageAsync(s)
+                }
+                finished = await Promise.allSettled(finished)
+                // console.log(finished)
             }
+            // let arrayPhotos = props.route.params.photos
+            // while (arrayPhotos.length) {
+            //    // console.log("ciao")
+            //    // console.log(arrayPhotos.splice(0, 4));
+            //     uploadImageAsync(arrayPhotos.splice(0, 4))
+            // }
             props.route.params = {}
         }
         if (props.route.params !== undefined && props.route.params.customerSelected !== undefined) {
@@ -252,50 +279,58 @@ export default function Client(props) {
     }
 
     async function uploadImageAsync(ph) {
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                resolve(xhr.response);
-            };
-            xhr.onerror = function (e) {
-                console.log(e);
-                reject(new TypeError("Error"));
-            };
-            xhr.responseType = "blob";
-            xhr.open("GET", ph.uri, true);
-            xhr.send(null);
-        });
-        const now = Date.now()
-        var customer = {}
-        customer[typology] = customerSelected[typology]
-        const storageRef = ref(storage, '/files/' + customerSelected.nome_cognome + '/' + typology.replace("foto_", "") + '/' + now + "_" + ph.name.toLowerCase())
-        const uploadTask = uploadBytesResumable(storageRef, blob)
-        uploadTask.on("state_changed", (snapshot) => {
-            console.log("Uploading...")
-        }, (error) => console.log("error: ", error),
-            () => {
-                //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
-                getDownloadURL(uploadTask.snapshot.ref).then((fileUrl) => {
-                    console.log("fileUrl: ", fileUrl)
-                    customer[typology].push(fileUrl)
-                    axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer, { headers: { "Authorization": `Bearer ${token}` } }).then(response => {
-                        axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer, { headers: { "Authorization": `Bearer ${token}` } }).then(resp => {
-                            setCustomerSelected(resp.data)
-                            setIsLoading(false)
-                            getCustomers()
+        return new Promise(async (resolve, reject) => {
+            const blob = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = function () {
+                    resolve(xhr.response);
+                };
+                xhr.onerror = function (e) {
+                    // console.log(e);
+                    reject(new TypeError("Error"));
+                };
+                xhr.responseType = "blob";
+                xhr.open("GET", ph.uri, true);
+                xhr.send(null);
+            });
+            const now = Date.now()
+            var customer = {}
+            customer[typology] = customerSelected[typology]
+            const storageRef = ref(storage, '/files/' + customerSelected.nome_cognome + '/' + typology.replace("foto_", "") + '/' + now + "_" + ph.name.toLowerCase())
+            const uploadTask = uploadBytesResumable(storageRef, blob)
+            uploadTask.on("state_changed", (snapshot) => {
+                // console.log("Uploading...")
+                // console.log("ph:", ph)
+            }, (error) => {
+                // console.log("error: ", error)
+            },
+                () => {
+                    //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
+                    getDownloadURL(uploadTask.snapshot.ref).then((fileUrl) => {
+                        // console.log("fileUrl: ", fileUrl)
+                        customer[typology].push(fileUrl)
+                        axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer, { headers: { "Authorization": `Bearer ${token}` } }).then(response => {
+                            axiosInstance.put(beUrl + "customer/" + customerSelected._id, customer, { headers: { "Authorization": `Bearer ${token}` } }).then(resp => {
+                                setCustomerSelected(resp.data)
+                                setIsLoading(false)
+                                getCustomers()
+                                resolve("aggiornato");
+                            }).catch((error) => {
+                                // console.log("error: ", error)
+                                setIsLoading(false)
+                                setShowError(true)
+                                reject(error);
+                            });
                         }).catch((error) => {
-                            console.log("error: ", error)
+                            // console.log("error: ", error)
                             setIsLoading(false)
                             setShowError(true)
+                            reject(error);
                         });
-                    }).catch((error) => {
-                        console.log("error: ", error)
-                        setIsLoading(false)
-                        setShowError(true)
-                    });
-                })
-            }
-        )
+                    })
+                }
+            )
+        })
     }
 
     React.useEffect(() => {
@@ -323,12 +358,12 @@ export default function Client(props) {
         //             setIsLoading(false)
         //         }).catch(error => {
         //             setIsLoading(false)
-        //             console.log("Customer not found")
+        //            // console.log("Customer not found")
         //             setShowError(true)
         //         });
         // }).catch(()=>{
         //     setIsLoading(false)
-        //     console.log("Error")
+        //    // console.log("Error")
         //     setShowError(true)
         // })
         if (user === undefined) {
@@ -347,7 +382,7 @@ export default function Client(props) {
                     setIsLoading(false)
                 }).catch(error => {
                     setIsLoading(false)
-                    console.log("Customer not found")
+                    // console.log("Customer not found")
                     setShowError(true)
                 })
         } else {
@@ -366,7 +401,7 @@ export default function Client(props) {
                     setIsLoading(false)
                 }).catch(error => {
                     setIsLoading(false)
-                    console.log("Customer not found")
+                    // console.log("Customer not found")
                     setShowError(true)
                 })
         }
@@ -543,7 +578,7 @@ export default function Client(props) {
                     <Portal>
                         <Dialog visible={openSopralluogo} onDismiss={() => { setOpenSopralluogo(false) }} style={{ height: "100%" }}>
                             {
-                                customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_sopralluogo} visible={openSopralluogo} />
+                                customerSelected.foto_sopralluogo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_sopralluogo} visible={openSopralluogo} />
                                     <FlatGrid
                                         itemDimension={80}
                                         data={customerSelected.foto_sopralluogo}
@@ -568,7 +603,7 @@ export default function Client(props) {
                     <Portal>
                         <Dialog visible={openInstallazione} onDismiss={() => { setOpenInstallazione(false) }} style={{ height: "100%" }}>
                             {
-                                customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : //<GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_fine_installazione} visible={openInstallazione} onPress={() => console.log("ciao")} renderModalImage={(is) => imagesToShow(is, customerSelected.foto_fine_installazione.indexOf(is))} />
+                                customerSelected.foto_fine_installazione.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}><Text>Non sono presenti foto.</Text></View> : //<GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_fine_installazione} visible={openInstallazione} onPress={() => console.log("ciao")} renderModalImage={(is) => imagesToShow(is, customerSelected.foto_fine_installazione.indexOf(is))} />
                                     <FlatGrid
                                         itemDimension={80}
                                         data={customerSelected.foto_fine_installazione}
@@ -602,7 +637,7 @@ export default function Client(props) {
                     <Portal>
                         <Dialog visible={openAssistenza} onDismiss={() => { setOpenAssistenza(false) }} style={{ height: "100%" }}>
                             {
-                                customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_assistenza} visible={openAssistenza} />
+                                customerSelected.foto_assistenza.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_assistenza} visible={openAssistenza} />
                                     <FlatGrid
                                         itemDimension={80}
                                         data={customerSelected.foto_assistenza}
