@@ -248,6 +248,9 @@ export default function QRScanner({ user }) {
                     }}
                     inputContainerStyle={{
                         backgroundColor: "white",
+                        borderWidth: "2",
+                        borderStyle: "solid",
+                        borderColor: "black",
                     }}
                     suggestionsListContainerStyle={{
                     }}

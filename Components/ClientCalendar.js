@@ -214,15 +214,15 @@ export default function ClientCalendar(props) {
             //     uploadImageAsync(s)
             // }
             let phs = props.route.params.photos
-            while (phs.length) {
-                let finished = []
-                for (let s of phs.splice(0, 4)) {
-                    // console.log(s)
-                    finished.push(uploadImageAsync(s))
-                    // uploadImageAsync(s)
-                }
-                finished = await Promise.allSettled(finished)
+            // while (phs.length) {
+            let finished = []
+            for (let s of phs) { //.splice(0, 2)
+                // console.log(s)
+                finished.push(uploadImageAsync(s))
+                // uploadImageAsync(s)
             }
+            finished = await Promise.allSettled(finished)
+            // }
             props.route.params = {}
         }
         if (props.route.params !== undefined && props.route.params.customerSelected !== undefined) {

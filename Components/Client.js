@@ -211,17 +211,17 @@ export default function Client(props) {
             var customer = {}
             customer[typology] = customerSelected[typology]
             let phs = props.route.params.photos
-            while (phs.length) {
-                // console.log(phs.splice(0, 4));
-                let finished = []
-                for (let s of phs.splice(0, 4)) {
-                    // console.log(s)
-                    finished.push(uploadImageAsync(s))
-                    // await uploadImageAsync(s)
-                }
-                finished = await Promise.allSettled(finished)
-                // console.log(finished)
+            // while (phs.length) {
+            // console.log(phs.splice(0, 4));
+            let finished = []
+            for (let s of phs) {
+                // console.log(s)
+                finished.push(uploadImageAsync(s))
+                // await uploadImageAsync(s)
             }
+            finished = await Promise.allSettled(finished)
+            // console.log(finished)
+            // }
             // let arrayPhotos = props.route.params.photos
             // while (arrayPhotos.length) {
             //    // console.log("ciao")
@@ -482,6 +482,9 @@ export default function Client(props) {
                             }}
                             inputContainerStyle={{
                                 backgroundColor: "white",
+                                borderWidth: "2",
+                                borderStyle: "solid",
+                                borderColor: "black",
                                 zIndex: 999
                             }}
                             suggestionsListContainerStyle={{
