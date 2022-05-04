@@ -490,8 +490,9 @@ export default function Client(props) {
                             }}
                             inputContainerStyle={{
                                 backgroundColor: "white",
-                                borderWidth: "2",
+                                borderWidth: 1,
                                 borderStyle: "solid",
+                                // borderRadius: 10,
                                 borderColor: "black",
                                 zIndex: 999
                             }}

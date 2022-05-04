@@ -248,7 +248,7 @@ export default function QRScanner({ user }) {
                     }}
                     inputContainerStyle={{
                         backgroundColor: "white",
-                        borderWidth: "2",
+                        borderWidth: 1,
                         borderStyle: "solid",
                         borderColor: "black",
                     }}
