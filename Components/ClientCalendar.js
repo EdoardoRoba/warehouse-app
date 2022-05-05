@@ -163,6 +163,7 @@ export default function ClientCalendar(props) {
     const [customers, setCustomers] = React.useState([]);
     const [fotosToShow, setFotosToShow] = React.useState([]);
     const [customerSelected, setCustomerSelected] = React.useState({});
+    const [event, setEvent] = React.useState({});
     const [isLoading, setIsLoading] = React.useState(false);
     const [showError, setShowError] = React.useState(false);
     const [showCopyboard, setShowCopyboard] = React.useState(false);
@@ -207,6 +208,9 @@ export default function ClientCalendar(props) {
 
     React.useEffect(async () => {
         setIsLoading(true)
+        if (props.route.params !== undefined && props.route.params.event !== undefined) {
+            setEvent(props.route.params.event)
+        }
         if (props.route.params !== undefined && props.route.params.photos !== undefined) {
             var customer = {}
             customer[typology] = customerSelected[typology]
@@ -358,10 +362,10 @@ export default function ClientCalendar(props) {
         })
     }
 
-    const imagesToShow = (images, image) => {
+    const imagesToShow = (images, img) => {
         // console.log(idx)
         setAllImages(images)
-        setSingleImage(image)
+        setSingleImage(img)
         setOpenPhotos(true)
     }
 
@@ -372,6 +376,12 @@ export default function ClientCalendar(props) {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
                     <FlashMessage position="top" style={{ zIndex: 1000 }} />
                     <Title style={{ marginTop: 50, fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
+                    {
+                        !event.start ? null : <Paragraph style={{ marginTop: 10, fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>Inizio:</Text> {event.start.replace("T", " ").replace("Z", " ")}</Paragraph>
+                    }
+                    {
+                        !event.end ? null : <Paragraph style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>Fine:</Text> {event.end.replace("T", " ").replace("Z", " ")}</Paragraph>
+                    }
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline" }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
                     <Paragraph onPress={() => {
@@ -394,7 +404,7 @@ export default function ClientCalendar(props) {
                             </Pressable>
                         </View>
                     </View>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                    <View style={{ marginTop: 30, marginLeft: 'auto', marginRight: 'auto' }}>
                         {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Fine installazione</Title> */}
                         <View style={{ flexDirection: "row", }}>
                             <Pressable
@@ -409,7 +419,7 @@ export default function ClientCalendar(props) {
                         </View>
                     </View>
                     {
-                        !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                        !customerSelected.isAssisted ? null : <View style={{ marginTop: 30, marginLeft: 'auto', marginRight: 'auto' }}>
                             {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
                             <View style={{ flexDirection: "row", }}>
                                 <Pressable
@@ -425,7 +435,7 @@ export default function ClientCalendar(props) {
                         </View>
                     }
                     {
-                        user !== "admin" ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                        user !== "admin" ? null : <View style={{ marginTop: 30, marginLeft: 'auto', marginRight: 'auto' }}>
                             <View style={{ flexDirection: "row", }}>
                                 <Pressable
                                     style={[styles.button, styles.buttonOpen]}

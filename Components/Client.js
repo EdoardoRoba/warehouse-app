@@ -444,10 +444,10 @@ export default function Client(props) {
         })
     }
 
-    const imagesToShow = (images, image) => {
+    const imagesToShow = (images, img) => {
         // console.log(idx)
         setAllImages(images)
-        setSingleImage(image)
+        setSingleImage(img)
         setOpenPhotos(true)
     }
 

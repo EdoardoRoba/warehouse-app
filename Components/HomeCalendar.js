@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MyCalendar from './MyCalendar';
 import ClientCalendar from './ClientCalendar';
 import ImageBrowserScreenCalendar from './ImageBrowserScreenCalendar';
+import AppuntamentoCalendar from './AppuntamentoCalendar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -18,16 +19,17 @@ export default function HomeCalendar({ user }) {
         <Stack.Navigator initialRouteName='Calendar'>
             <Stack.Screen name='Calendar' component={MyCalendar} options={{ headerShown: false }} initialParams={{ user: user }} />
             <Stack.Screen
+                name='AppuntamentoCalendar'
+                component={AppuntamentoCalendar}
+                options={{
+                    title: 'Visualizza appuntamento'
+                }}
+            />
+            <Stack.Screen
                 name='ClientCalendar'
                 component={ClientCalendar}
                 options={{
                     title: 'Visualizza cliente'
-                    // header: (navigation) =>
-                    // (
-                    //     <View style={{ height: 20, backgroundColor: "white" }}>
-                    //         <Icon name={"arrow-left"} size={20} navigation={navigation.navigate("Calendar")} style={{ position: 'absolute', left: 30 }} />
-                    //     </View>
-                    // )
                 }}
             />
             <Stack.Screen

@@ -64,7 +64,7 @@ export default function MyCalendar(props) {
     const [eventsCalendar, setEventsCalendar] = React.useState({})
     const [itemsCalendar, setItemsCalendar] = React.useState({})
     const [customersInEvent, setCustomersInEvent] = React.useState([])
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [showDates, setShowDates] = React.useState(false);
     const [openModal, setOpenModal] = React.useState(false);
     const [token, setToken] = React.useState(null);
@@ -90,6 +90,7 @@ export default function MyCalendar(props) {
     }, [eventsCalendar]);
 
     const getEvents = () => {
+        setIsLoading(true)
         let userFilter = props.route.params.user
         if (userFilter === "mirisola") {
             userFilter = "admin"
@@ -125,13 +126,13 @@ export default function MyCalendar(props) {
                 // console.log(periods)
                 let period = {}
                 let item = {}
-                item = { name: e.title, height: 20, dateString: dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0"), customerId: e.customer._id }
+                item = { name: e.title, height: 20, dateString: dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0"), type: e.type, customerId: e.customer._id, start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
                 if (dt === new Date(e.start)) {
-                    period = { startingDay: true, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, customerId: e.customer._id }
+                    period = { startingDay: true, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, type: e.type, customerId: e.customer._id, start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
                 } else if (dt === new Date(e.end)) {
-                    period = { startingDay: false, endingDay: true, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, customerId: e.customer._id }
+                    period = { startingDay: false, endingDay: true, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, type: e.type, customerId: e.customer._id, start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
                 } else {
-                    period = { startingDay: false, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, customerId: e.customer._id }
+                    period = { startingDay: false, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, type: e.type, customerId: e.customer._id, start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
                 }
                 periods.push(period)
                 items.push(item)
@@ -143,18 +144,8 @@ export default function MyCalendar(props) {
                 }
             }
         }
-        // console.log(itemCalendar)
         setItemsCalendar(itemCalendar)
         setEventsCalendar(eventCalendar)
-        // setEventsCalendar({
-        //     '2022-04-16': { selected: true, marked: true },
-        //     '2022-04-17': { marked: true },
-        //     '2022-04-18': { disabled: true }
-        // })
-        // console.log(eventCalendar)
-        // ok = await Promise.allSettled(ok)
-        // let isOk = ok.filter((e) => e.status === "fulfilled").map((e) => e.value)
-        // let isNotOk = ok.filter((e) => e.status !== "fulfilled").map((e) => e.value)
         setIsLoading(false)
     }
 
@@ -178,19 +169,24 @@ export default function MyCalendar(props) {
         }
     }
 
-    const showCustomer = (id) => {
+    const showCustomer = (item) => {
         setIsLoading(true)
-        axiosInstance.get(beUrl + 'customer/' + id, { headers: { "Authorization": `Bearer ${token}` } })
-            .then(res => {
-                setCustomerSelected(res.data)
-                setOpenModal(true)
-                setIsLoading(false)
-                navigate('ClientCalendar', { customerSelected: res.data });
-            }).catch(error => {
-                console.log("ok")
-                setIsLoading(false)
-                // setShowError(true)
-            });
+        if (item.type !== "appuntamento") {
+            axiosInstance.get(beUrl + 'customer/' + item.customerId, { headers: { "Authorization": `Bearer ${token}` } })
+                .then(res => {
+                    setCustomerSelected(res.data)
+                    setOpenModal(true)
+                    setIsLoading(false)
+                    navigate('ClientCalendar', { customerSelected: res.data, event: item });
+                }).catch(error => {
+                    // console.log("ok")
+                    setIsLoading(false)
+                    // setShowError(true)
+                });
+        } else {
+            setIsLoading(false)
+            navigate('AppuntamentoCalendar', { appuntamento: item });
+        }
     }
 
     // Return the SafeAreaView
@@ -211,7 +207,7 @@ export default function MyCalendar(props) {
                 refreshing={false}
                 renderItem={(item) => {
                     return <Pressable style={[styles.item]} onPress={() => {
-                        showCustomer(item.customerId)
+                        showCustomer(item)
                         // console.log("ciao")
                     }}><Text>{item.name}</Text></Pressable>
                 }}
