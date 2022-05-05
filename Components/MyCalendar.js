@@ -121,9 +121,6 @@ export default function MyCalendar(props) {
                     periods = eventCalendar[dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0")].periods
                     items = itemCalendar[dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0")]
                 }
-                // console.log("periods")
-                // console.log(dt)
-                // console.log(periods)
                 let period = {}
                 let item = {}
                 item = { name: e.title, height: 20, dateString: dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0"), type: e.type, customerId: e.customer._id, start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }

@@ -828,7 +828,7 @@ export default function ClientCalendar(props) {
                                             {
                                                 customerSelected.assistenza === undefined ? null : <View>
                                                     {
-                                                        customerSelected.assistenza.length === 0 ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                                        customerSelected.assistenza.length === 0 || customerSelected.assistenza[0] === "" ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
                                                             <View style={{ marginTop: 20 }}>
                                                                 {
                                                                     customerSelected.assistenza.map((pi, idx) => {
@@ -886,7 +886,7 @@ export default function ClientCalendar(props) {
                                                         customerSelected.pagamenti_pdf.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
                                                             <View>
                                                                 {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                    customerSelected.pagamenti_pdf.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
@@ -904,7 +904,7 @@ export default function ClientCalendar(props) {
                                                         customerSelected.trasferta.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
                                                             <View>
                                                                 {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                    customerSelected.trasferta.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
@@ -922,7 +922,7 @@ export default function ClientCalendar(props) {
                                                         customerSelected.collaudo.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
                                                             <View>
                                                                 {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                    customerSelected.collaudo.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
@@ -940,7 +940,7 @@ export default function ClientCalendar(props) {
                                                         customerSelected.check_list.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
                                                             <View>
                                                                 {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                    customerSelected.check_list.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
@@ -958,7 +958,7 @@ export default function ClientCalendar(props) {
                                                         customerSelected.fgas.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
                                                             <View>
                                                                 {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                    customerSelected.fgas.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
@@ -976,25 +976,7 @@ export default function ClientCalendar(props) {
                                                         customerSelected.prova_fumi.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
                                                             <View>
                                                                 {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
-                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
-                                                                            onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
-                                                                        </Text>
-                                                                    })
-                                                                }
-                                                            </View>
-                                                    }
-                                                </View>
-                                            }
-                                            {
-                                                customerSelected.di_co === undefined ? null : <View style={{ marginTop: 10 }}>
-                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>di.co:</Text>
-                                                    {
-                                                        customerSelected.fgas.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
-                                                            <View>
-                                                                {
-                                                                    customerSelected.assistenza.map((pi, idx) => {
+                                                                    customerSelected.prova_fumi.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}

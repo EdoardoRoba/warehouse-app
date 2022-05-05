@@ -1,7 +1,7 @@
 import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Button, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 import NumericInput from 'react-native-numeric-input';
@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
     barcodebox: {
         alignItems: 'center',
         justifyContent: 'center',
-        height: 280,
-        width: 280,
+        height: 230,
+        width: 230,
         overflow: 'hidden',
         borderRadius: 30,
         backgroundColor: 'tomato',
-        marginBottom: 20
+        marginBottom: 10
     },
     input: {
         height: 40,
@@ -272,7 +272,7 @@ export default function QRScanner({ user }) {
                     </View>
                 }
                 {
-                    (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <View style={{ width: "90%" }}>
+                    (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={{ width: "90%" }}>
                         {!toolFound || toolFound.label === undefined ? null :
                             <SafeAreaView style={{ width: "100%" }}>
                                 <Card style={{ width: "100%" }}>
@@ -295,7 +295,7 @@ export default function QRScanner({ user }) {
                                 }
                             </SafeAreaView>
                         }
-                    </View>
+                    </ScrollView>
                 }
                 {
                     !showError ? null : <Text style={{ width: '50%', marginLeft: 'auto', marginRight: 'auto' }} severity="error">Errore. Controlla la connessione o i dati inseriti.</Text>
