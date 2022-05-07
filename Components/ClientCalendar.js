@@ -879,6 +879,11 @@ export default function ClientCalendar(props) {
                                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Pagamenti (testo):</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.pagamenti_testo}</Text>
                                                 </View>
                                             </View>
+                                            <View>
+                                                <View style={{ marginTop: 15, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Trasferta:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.trasferta}</Text>
+                                                </View>
+                                            </View>
                                             {
                                                 customerSelected.pagamenti_pdf === undefined ? null : <View style={{ marginTop: 20 }}>
                                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Pagamenti (pdf):</Text>
@@ -890,24 +895,6 @@ export default function ClientCalendar(props) {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
-                                                                        </Text>
-                                                                    })
-                                                                }
-                                                            </View>
-                                                    }
-                                                </View>
-                                            }
-                                            {
-                                                customerSelected.trasferta === undefined ? null : <View style={{ marginTop: 10 }}>
-                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Trasferta:</Text>
-                                                    {
-                                                        customerSelected.trasferta.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
-                                                            <View>
-                                                                {
-                                                                    customerSelected.trasferta.map((pi, idx) => {
-                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
-                                                                            onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }

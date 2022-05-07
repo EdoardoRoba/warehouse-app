@@ -349,30 +349,6 @@ export default function Client(props) {
 
     const getCustomers = (user) => {
         setIsLoading(true)
-        // axiosInstance.get(beUrl + 'employeeIsExternal', { headers: { "Authorization": `Bearer ${token}` } }).then(()=>{
-        //     axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` } })
-        //         .then(res => {
-        //             let custs = res.data
-        //             custs.sort((a, b) => (a.nome_cognome.toUpperCase() > b.nome_cognome.toUpperCase()) ? 1 : -1)
-        //             let ds = res.data.map((cust) => ({
-        //                 id: cust.nome_cognome,
-        //                 title: cust.nome_cognome,
-        //                 customerSelected: cust
-        //             }))
-        //             setDataset(ds)
-        //             // console.log("Tools: ", res.data)
-        //             setCustomers(custs)
-        //             setIsLoading(false)
-        //         }).catch(error => {
-        //             setIsLoading(false)
-        //            // console.log("Customer not found")
-        //             setShowError(true)
-        //         });
-        // }).catch(()=>{
-        //     setIsLoading(false)
-        //    // console.log("Error")
-        //     setShowError(true)
-        // })
         if (user === undefined) {
             axiosInstance.get(beUrl + 'customer', { headers: { "Authorization": `Bearer ${token}` } })
                 .then(res => {
@@ -470,6 +446,7 @@ export default function Client(props) {
                             closeOnSubmit={false}
                             // initialValue={{ id: '2' }} // or just '2'
                             onSelectItem={(event) => {
+                                console.log(event)
                                 if (event !== null) {
                                     openCustomer(event.customerSelected)
                                 }
@@ -478,15 +455,15 @@ export default function Client(props) {
                                 style: {
                                     width: 300,
                                     color: "black",
-                                    zIndex: 999,
+                                    zIndex: 1000,
                                 },
-                                zIndex: 999
+                                zIndex: 1000
                             }}
                             rightButtonsContainerStyle={{
                                 borderRadius: 25,
                                 alignSelfs: "center",
                                 color: "black",
-                                zIndex: 999
+                                zIndex: 1000
                             }}
                             inputContainerStyle={{
                                 backgroundColor: "white",
@@ -494,10 +471,10 @@ export default function Client(props) {
                                 borderStyle: "solid",
                                 // borderRadius: 10,
                                 borderColor: "black",
-                                zIndex: 999
+                                zIndex: 1000
                             }}
                             suggestionsListContainerStyle={{
-                                zIndex: 999
+                                zIndex: 1000
                             }}
                             containerStyle={{ flexGrow: 1, flexShrink: 1 }}
                             dataSet={dataset}
@@ -507,17 +484,17 @@ export default function Client(props) {
             }
             {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", alignItems: 'center', zIndex: -1 }}>
-                    <Title style={{ fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
-                    <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
-                    <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline" }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
+                    <Title style={{ fontWeight: "bold", zIndex: -1 }}>{customerSelected.nome_cognome}</Title>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20, zIndex: -1 }}>{customerSelected.company}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline", zIndex: -1 }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
                     <Paragraph onPress={() => {
                         Clipboard.setString(customerSelected.indirizzo + "," + customerSelected.comune + "," + customerSelected.provincia)
                         setShowCopyboard(true)
                     }}
-                        style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
-                    <Paragraph style={{ marginTop: 15, fontSize: 15 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        <View style={{ flexDirection: "row", }}>
+                        style={{ marginTop: 15, textDecorationLine: "underline", zIndex: -1 }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
+                    <Paragraph style={{ marginTop: 15, fontSize: 15, zIndex: -1 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
+                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto', zIndex: -1 }}>
+                        <View style={{ flexDirection: "row", zIndex: -1 }}>
                             <Pressable
                                 style={[styles.button, styles.buttonOpen]}
                                 onPress={() => {
@@ -949,6 +926,11 @@ export default function Client(props) {
                                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Pagamenti (testo):</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.pagamenti_testo}</Text>
                                                 </View>
                                             </View>
+                                            <View>
+                                                <View style={{ marginTop: 15, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Trasferta:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.trasferta}</Text>
+                                                </View>
+                                            </View>
                                             {
                                                 customerSelected.pagamenti_pdf === undefined ? null : <View style={{ marginTop: 20 }}>
                                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Pagamenti (pdf):</Text>
@@ -957,24 +939,6 @@ export default function Client(props) {
                                                             <View>
                                                                 {
                                                                     customerSelected.pagamenti_pdf.map((pi, idx) => {
-                                                                        return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
-                                                                            onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
-                                                                        </Text>
-                                                                    })
-                                                                }
-                                                            </View>
-                                                    }
-                                                </View>
-                                            }
-                                            {
-                                                customerSelected.trasferta === undefined ? null : <View style={{ marginTop: 10 }}>
-                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Trasferta:</Text>
-                                                    {
-                                                        customerSelected.trasferta.length === 0 ? <Text style={{ marginTop: 5 }}>(no pdf)</Text> :
-                                                            <View>
-                                                                {
-                                                                    customerSelected.trasferta.map((pi, idx) => {
                                                                         return <Text style={{ marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
                                                                             {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
