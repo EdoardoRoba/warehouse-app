@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/idroaltech_logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -26,8 +26,9 @@
       "bundleIdentifier": "com.idroaltech.idroaltech"
     },
     "android": {
+      "package": "idroaltech.idroaltech",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/idroaltech_logo.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [

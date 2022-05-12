@@ -292,12 +292,17 @@ export default function Client(props) {
                 xhr.onload = function () {
                     resolve(xhr.response);
                 };
+                xhr.ontimeout = function (e) {
+                    console.log(e);
+                    reject(new TypeError("Error timeout"));
+                };
                 xhr.onerror = function (e) {
                     // console.log(e);
                     reject(new TypeError("Error"));
                 };
                 xhr.responseType = "blob";
                 xhr.open("GET", ph.uri, true);
+                xhr.timeout = 1000 * 60;
                 xhr.send(null);
             });
             const now = Date.now()
@@ -309,7 +314,8 @@ export default function Client(props) {
                 // console.log("Uploading...")
                 // console.log("ph:", ph)
             }, (error) => {
-                // console.log("error: ", error)
+                console.log("error: ", error)
+                blob.close();
             },
                 () => {
                     //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
@@ -335,6 +341,7 @@ export default function Client(props) {
                             reject(error);
                         });
                     })
+                    blob.close();
                 }
             )
         })
@@ -440,13 +447,15 @@ export default function Client(props) {
                             justifyContent: 'center',
                         }}>
                         <Text>Seleziona cliente</Text>
+                        {/* Platform.select({ android: { zIndex: 1000 } }) */}
+                        {/* <View style={{ zIndex: 1000, position: 'absolute', right: 50 }}> */}
                         <AutocompleteDropdown
                             clearOnFocus={false}
                             closeOnBlur={true}
                             closeOnSubmit={false}
                             // initialValue={{ id: '2' }} // or just '2'
                             onSelectItem={(event) => {
-                                console.log(event)
+                                // console.log(event)
                                 if (event !== null) {
                                     openCustomer(event.customerSelected)
                                 }
@@ -456,14 +465,17 @@ export default function Client(props) {
                                     width: 300,
                                     color: "black",
                                     zIndex: 1000,
+                                    // elevation: 5
                                 },
-                                zIndex: 1000
+                                zIndex: 1000,
+                                // elevation: 5
                             }}
                             rightButtonsContainerStyle={{
                                 borderRadius: 25,
                                 alignSelfs: "center",
                                 color: "black",
-                                zIndex: 1000
+                                zIndex: 1000,
+                                // elevation: 5
                             }}
                             inputContainerStyle={{
                                 backgroundColor: "white",
@@ -471,14 +483,17 @@ export default function Client(props) {
                                 borderStyle: "solid",
                                 // borderRadius: 10,
                                 borderColor: "black",
-                                zIndex: 1000
+                                zIndex: 1000,
+                                // elevation: 5
                             }}
                             suggestionsListContainerStyle={{
-                                zIndex: 1000
+                                zIndex: 1000,
+                                // elevation: 5
                             }}
                             containerStyle={{ flexGrow: 1, flexShrink: 1 }}
                             dataSet={dataset}
                         />
+                        {/* </View> */}
                     </View>
                 </Provider>
             }
