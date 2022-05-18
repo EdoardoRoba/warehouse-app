@@ -92,9 +92,9 @@ export default function MyCalendar(props) {
     const getEvents = () => {
         setIsLoading(true)
         let userFilter = props.route.params.user
-        if (userFilter === "mirisola") {
-            userFilter = "admin"
-        }
+        // if (userFilter === "mirisola") {
+        //     userFilter = "admin"
+        // }
         axiosInstance.get(beUrl + 'calendar?user=' + userFilter, { headers: { "Authorization": `Bearer ${token}` } })
             .then(res => {
                 setEvents(res.data)

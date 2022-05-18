@@ -287,24 +287,26 @@ export default function Client(props) {
 
     async function uploadImageAsync(ph) {
         return new Promise(async (resolve, reject) => {
-            const blob = await new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.onload = function () {
-                    resolve(xhr.response);
-                };
-                xhr.ontimeout = function (e) {
-                    console.log(e);
-                    reject(new TypeError("Error timeout"));
-                };
-                xhr.onerror = function (e) {
-                    // console.log(e);
-                    reject(new TypeError("Error"));
-                };
-                xhr.responseType = "blob";
-                xhr.open("GET", ph.uri, true);
-                xhr.timeout = 1000 * 60;
-                xhr.send(null);
-            });
+            // const blob = await new Promise((resolve, reject) => {
+            //     const xhr = new XMLHttpRequest();
+            //     xhr.onload = function () {
+            //         resolve(xhr.response);
+            //     };
+            //     xhr.ontimeout = function (e) {
+            //         console.log(e);
+            //         reject(new TypeError("Error timeout"));
+            //     };
+            //     xhr.onerror = function (e) {
+            //         // console.log(e);
+            //         reject(new TypeError("Error"));
+            //     };
+            //     xhr.responseType = "blob";
+            //     xhr.open("GET", ph.uri, true);
+            //     xhr.timeout = 1000 * 60;
+            //     xhr.send(null);
+            // });
+            const img = await fetch(ph.uri);
+            const blob = await img.blob();
             const now = Date.now()
             var customer = {}
             customer[typology] = customerSelected[typology]
