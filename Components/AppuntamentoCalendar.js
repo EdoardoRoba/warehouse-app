@@ -211,6 +211,9 @@ export default function AppuntamentoCalendar(props) {
             {
                 !appuntamento.end ? null : <Paragraph style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>Fine:</Text> {appuntamento.end.replace("T", " ").replace("Z", " ")}</Paragraph>
             }
+            {
+                !appuntamento.employees ? null : <Paragraph style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>Dipendenti:</Text> {appuntamento.employees}</Paragraph>
+            }
         </View >
     );
 }
