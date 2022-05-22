@@ -442,61 +442,128 @@ export default function Client(props) {
             {
                 customers === null ? null : <Provider>
                     <FlashMessage position="top" style={{ zIndex: 1000 }} />
-                    <View
-                        style={{
-                            marginTop: 20,
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                        }}>
-                        <Text>Seleziona cliente</Text>
-                        {/* Platform.select({ android: { zIndex: 1000 } }) */}
-                        {/* <View style={{ zIndex: 1000, position: 'absolute', right: 50 }}> */}
-                        <AutocompleteDropdown
-                            clearOnFocus={false}
-                            closeOnBlur={true}
-                            closeOnSubmit={false}
-                            // initialValue={{ id: '2' }} // or just '2'
-                            onSelectItem={(event) => {
-                                // console.log(event)
-                                if (event !== null) {
-                                    openCustomer(event.customerSelected)
+                    {
+                        Platform.OS === 'android' ?
+                            <View>
+                                {
+                                    customerSelected.nome_cognome !== undefined ? <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setCustomerSelected({})}>
+                                        <Icon name={"search"} size={25} style={{ marginTop: 10 }} />
+                                    </TouchableOpacity>
+                                        : <View
+                                            style={{
+                                                marginTop: 20,
+                                                flexDirection: 'column',
+                                                justifyContent: 'center',
+                                            }}>
+                                            <Text>Seleziona cliente</Text>
+                                            {/* Platform.select({ android: { zIndex: 1000 } }) */}
+                                            {/* <View style={Platform.select({ android: { elevation: 3, position: 'absolute' } })}> */}
+                                            <AutocompleteDropdown
+                                                clearOnFocus={false}
+                                                closeOnBlur={true}
+                                                closeOnSubmit={false}
+                                                // initialValue={{ id: '2' }} // or just '2'
+                                                onSelectItem={(event) => {
+                                                    // console.log(event)
+                                                    if (event !== null) {
+                                                        openCustomer(event.customerSelected)
+                                                    }
+                                                }}
+                                                textInputProps={{
+                                                    style: {
+                                                        width: 300,
+                                                        color: "black",
+                                                        zIndex: 1000,
+                                                        // elevation: 5
+                                                    },
+                                                    zIndex: 1000,
+                                                    // elevation: 5
+                                                }}
+                                                rightButtonsContainerStyle={{
+                                                    borderRadius: 25,
+                                                    alignSelfs: "center",
+                                                    color: "black",
+                                                    zIndex: 1000,
+                                                    // elevation: 5
+                                                }}
+                                                inputContainerStyle={{
+                                                    backgroundColor: "white",
+                                                    borderWidth: 1,
+                                                    borderStyle: "solid",
+                                                    // borderRadius: 10,
+                                                    borderColor: "black",
+                                                    zIndex: 1000,
+                                                    // elevation: 5
+                                                }}
+                                                suggestionsListContainerStyle={{
+                                                    zIndex: 1000,
+                                                    // elevation: 5
+                                                }}
+                                                containerStyle={{ flexGrow: 1, flexShrink: 1 }}
+                                                dataSet={dataset}
+                                            />
+                                            {/* </View> */}
+                                        </View>
                                 }
-                            }}
-                            textInputProps={{
-                                style: {
-                                    width: 300,
-                                    color: "black",
-                                    zIndex: 1000,
-                                    // elevation: 5
-                                },
-                                zIndex: 1000,
-                                // elevation: 5
-                            }}
-                            rightButtonsContainerStyle={{
-                                borderRadius: 25,
-                                alignSelfs: "center",
-                                color: "black",
-                                zIndex: 1000,
-                                // elevation: 5
-                            }}
-                            inputContainerStyle={{
-                                backgroundColor: "white",
-                                borderWidth: 1,
-                                borderStyle: "solid",
-                                // borderRadius: 10,
-                                borderColor: "black",
-                                zIndex: 1000,
-                                // elevation: 5
-                            }}
-                            suggestionsListContainerStyle={{
-                                zIndex: 1000,
-                                // elevation: 5
-                            }}
-                            containerStyle={{ flexGrow: 1, flexShrink: 1 }}
-                            dataSet={dataset}
-                        />
-                        {/* </View> */}
-                    </View>
+                            </View>
+                            :
+                            <View
+                                style={{
+                                    marginTop: 20,
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                }}>
+                                <Text>Seleziona cliente</Text>
+                                {/* Platform.select({ android: { zIndex: 1000 } }) */}
+                                {/* <View style={Platform.select({ android: { elevation: 3, position: 'absolute' } })}> */}
+                                <AutocompleteDropdown
+                                    clearOnFocus={false}
+                                    closeOnBlur={true}
+                                    closeOnSubmit={false}
+                                    // initialValue={{ id: '2' }} // or just '2'
+                                    onSelectItem={(event) => {
+                                        // console.log(event)
+                                        if (event !== null) {
+                                            openCustomer(event.customerSelected)
+                                        }
+                                    }}
+                                    textInputProps={{
+                                        style: {
+                                            width: 300,
+                                            color: "black",
+                                            zIndex: 1000,
+                                            // elevation: 5
+                                        },
+                                        zIndex: 1000,
+                                        // elevation: 5
+                                    }}
+                                    rightButtonsContainerStyle={{
+                                        borderRadius: 25,
+                                        alignSelfs: "center",
+                                        color: "black",
+                                        zIndex: 1000,
+                                        // elevation: 5
+                                    }}
+                                    inputContainerStyle={{
+                                        backgroundColor: "white",
+                                        borderWidth: 1,
+                                        borderStyle: "solid",
+                                        // borderRadius: 10,
+                                        borderColor: "black",
+                                        zIndex: 1000,
+                                        // elevation: 5
+                                    }}
+                                    suggestionsListContainerStyle={{
+                                        zIndex: 1000,
+                                        // elevation: 5
+                                    }}
+                                    containerStyle={{ flexGrow: 1, flexShrink: 1 }}
+                                    dataSet={dataset}
+                                />
+                                {/* </View> */}
+                            </View>
+                    }
+
                 </Provider>
             }
             {
@@ -510,62 +577,118 @@ export default function Client(props) {
                     }}
                         style={{ marginTop: 15, textDecorationLine: "underline", zIndex: -1 }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 15, zIndex: -1 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto', zIndex: -1 }}>
-                        <View style={{ flexDirection: "row", zIndex: -1 }}>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => {
-                                    setSection("sopralluogo")
-                                    setModalVisibleSopralluogo(true)
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Sopralluogo</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        <View style={{ flexDirection: "row", }}>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => {
-                                    setSection("installazione")
-                                    setModalVisibleInstallazione(true)
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Installazione</Text>
-                            </Pressable>
-                        </View>
-                    </View>
                     {
-                        !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                            <View style={{ flexDirection: "row", }}>
-                                <Pressable
-                                    style={[styles.button, styles.buttonOpen]}
-                                    onPress={() => {
-                                        setSection("assistenza")
-                                        setModalVisibleAssistenza(true)
-                                    }}
-                                >
-                                    <Text style={styles.textStyle}>Assistenza</Text>
-                                </Pressable>
+                        Platform.OS === 'android' ? <>
+                            <View style={{ flexDirection: "column", marginTop: 40 }}>
+                                <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                    <Pressable
+                                        style={[styles.button, styles.buttonOpen]}
+                                        onPress={() => {
+                                            setSection("sopralluogo")
+                                            setModalVisibleSopralluogo(true)
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>Sopralluogo</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.button, styles.buttonOpen]}
+                                        onPress={() => {
+                                            setSection("installazione")
+                                            setModalVisibleInstallazione(true)
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>Installazione</Text>
+                                    </Pressable>
+                                </View>
                             </View>
-                        </View>
-                    }
-                    {
-                        user !== "admin" ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                            <View style={{ flexDirection: "row", }}>
-                                <Pressable
-                                    style={[styles.button, styles.buttonOpen]}
-                                    onPress={() => {
-                                        setSection("documenti")
-                                        setModalVisibleDocumenti(true)
-                                    }}
-                                >
-                                    <Text style={styles.textStyle}>Documenti</Text>
-                                </Pressable>
+                            <View style={{ flexDirection: "column", marginTop: 20 }}>
+                                <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                    {
+                                        !customerSelected.isAssisted ? null : <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("assistenza")
+                                                setModalVisibleAssistenza(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Assistenza</Text>
+                                        </Pressable>
+                                    }
+                                    {
+                                        user !== "admin" ? null : <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("documenti")
+                                                setModalVisibleDocumenti(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Documenti</Text>
+                                        </Pressable>
+                                    }
+                                </View>
                             </View>
-                        </View>
+                        </>
+                            :
+                            <>
+                                <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto', zIndex: -1 }}>
+                                    <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("sopralluogo")
+                                                setModalVisibleSopralluogo(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Sopralluogo</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+                                <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                    <View style={{ flexDirection: "row", }}>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("installazione")
+                                                setModalVisibleInstallazione(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Installazione</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+                                {
+                                    !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                        <View style={{ flexDirection: "row", }}>
+                                            <Pressable
+                                                style={[styles.button, styles.buttonOpen]}
+                                                onPress={() => {
+                                                    setSection("assistenza")
+                                                    setModalVisibleAssistenza(true)
+                                                }}
+                                            >
+                                                <Text style={styles.textStyle}>Assistenza</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                }
+                                {
+                                    user !== "admin" ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                        <View style={{ flexDirection: "row", }}>
+                                            <Pressable
+                                                style={[styles.button, styles.buttonOpen]}
+                                                onPress={() => {
+                                                    setSection("documenti")
+                                                    setModalVisibleDocumenti(true)
+                                                }}
+                                            >
+                                                <Text style={styles.textStyle}>Documenti</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                }
+                            </>
                     }
+
                 </View>
             }
             {
@@ -856,7 +979,7 @@ export default function Client(props) {
                                 <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
                                     <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
                                         <Pressable>
-                                            <View style={{ flexDirection: "columns", }}>
+                                            <View style={{ flexDirection: "column" }}>
                                                 <Pressable
                                                     style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
                                                     onPress={() => {

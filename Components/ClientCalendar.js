@@ -390,64 +390,116 @@ export default function ClientCalendar(props) {
                     }}
                         style={{ marginTop: 15, textDecorationLine: "underline" }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 15 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
-                    <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
-                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Sopralluogo</Title> */}
-                        <View style={{ flexDirection: "row", }}>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => {
-                                    setSection("sopralluogo")
-                                    setModalVisibleSopralluogo(true)
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Sopralluogo</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                    <View style={{ marginTop: 30, marginLeft: 'auto', marginRight: 'auto' }}>
-                        {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Fine installazione</Title> */}
-                        <View style={{ flexDirection: "row", }}>
-                            <Pressable
-                                style={[styles.button, styles.buttonOpen]}
-                                onPress={() => {
-                                    setSection("installazione")
-                                    setModalVisibleInstallazione(true)
-                                }}
-                            >
-                                <Text style={styles.textStyle}>Installazione</Text>
-                            </Pressable>
-                        </View>
-                    </View>
                     {
-                        !customerSelected.isAssisted ? null : <View style={{ marginTop: 30, marginLeft: 'auto', marginRight: 'auto' }}>
-                            {/* <Title style={{ marginLeft: 'auto', marginRight: 'auto' }}>Assistenza</Title> */}
-                            <View style={{ flexDirection: "row", }}>
-                                <Pressable
-                                    style={[styles.button, styles.buttonOpen]}
-                                    onPress={() => {
-                                        setSection("assistenza")
-                                        setModalVisibleAssistenza(true)
-                                    }}
-                                >
-                                    <Text style={styles.textStyle}>Assistenza</Text>
-                                </Pressable>
+                        Platform.OS === 'android' ? <>
+                            <View style={{ flexDirection: "column", marginTop: 40 }}>
+                                <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                    <Pressable
+                                        style={[styles.button, styles.buttonOpen]}
+                                        onPress={() => {
+                                            setSection("sopralluogo")
+                                            setModalVisibleSopralluogo(true)
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>Sopralluogo</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={[styles.button, styles.buttonOpen]}
+                                        onPress={() => {
+                                            setSection("installazione")
+                                            setModalVisibleInstallazione(true)
+                                        }}
+                                    >
+                                        <Text style={styles.textStyle}>Installazione</Text>
+                                    </Pressable>
+                                </View>
                             </View>
-                        </View>
-                    }
-                    {
-                        user !== "admin" ? null : <View style={{ marginTop: 30, marginLeft: 'auto', marginRight: 'auto' }}>
-                            <View style={{ flexDirection: "row", }}>
-                                <Pressable
-                                    style={[styles.button, styles.buttonOpen]}
-                                    onPress={() => {
-                                        setSection("documenti")
-                                        setModalVisibleDocumenti(true)
-                                    }}
-                                >
-                                    <Text style={styles.textStyle}>Documenti</Text>
-                                </Pressable>
+                            <View style={{ flexDirection: "column", marginTop: 20 }}>
+                                <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                    {
+                                        !customerSelected.isAssisted ? null : <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("assistenza")
+                                                setModalVisibleAssistenza(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Assistenza</Text>
+                                        </Pressable>
+                                    }
+                                    {
+                                        user !== "admin" ? null : <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("documenti")
+                                                setModalVisibleDocumenti(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Documenti</Text>
+                                        </Pressable>
+                                    }
+                                </View>
                             </View>
-                        </View>
+                        </>
+                            :
+                            <>
+                                <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto', zIndex: -1 }}>
+                                    <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("sopralluogo")
+                                                setModalVisibleSopralluogo(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Sopralluogo</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+                                <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                    <View style={{ flexDirection: "row", }}>
+                                        <Pressable
+                                            style={[styles.button, styles.buttonOpen]}
+                                            onPress={() => {
+                                                setSection("installazione")
+                                                setModalVisibleInstallazione(true)
+                                            }}
+                                        >
+                                            <Text style={styles.textStyle}>Installazione</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+                                {
+                                    !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                        <View style={{ flexDirection: "row", }}>
+                                            <Pressable
+                                                style={[styles.button, styles.buttonOpen]}
+                                                onPress={() => {
+                                                    setSection("assistenza")
+                                                    setModalVisibleAssistenza(true)
+                                                }}
+                                            >
+                                                <Text style={styles.textStyle}>Assistenza</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                }
+                                {
+                                    user !== "admin" ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                        <View style={{ flexDirection: "row", }}>
+                                            <Pressable
+                                                style={[styles.button, styles.buttonOpen]}
+                                                onPress={() => {
+                                                    setSection("documenti")
+                                                    setModalVisibleDocumenti(true)
+                                                }}
+                                            >
+                                                <Text style={styles.textStyle}>Documenti</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                }
+                            </>
                     }
                 </View>
             }
