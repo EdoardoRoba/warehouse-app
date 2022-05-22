@@ -26,7 +26,7 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.idroaltech.idroaltech",
-      "buildNumber": "1.0.3"
+      "buildNumber": "1.0.6"
     },
     "android": {
       "package": "idroaltech.idroaltech",
@@ -50,8 +50,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow image picker?",
-          "cameraPermission": "Allow camera?"
+          "photosPermission": "Allow image picker? You will be able to upload images of the appointment you had with the customer.",
+          "cameraPermission": "Allow camera? It is required to scan QR Codes of each product from the ware house."
         }
       ]
     ]

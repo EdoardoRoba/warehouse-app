@@ -27,6 +27,7 @@
     "expo-image-picker-multiple": "^1.4.1",
     "expo-media-library": "~14.0.0",
     "expo-status-bar": "~1.2.0",
+    "expo-updates": "~0.11.7",
     "firebase": "^9.6.9",
     "randomcolor": "^0.6.2",
     "react": "17.0.1",
@@ -63,8 +64,7 @@
     "react-navigation": "^4.4.4",
     "react-navigation-drawer": "^2.7.2",
     "react-navigation-stack": "^2.10.4",
-    "unimodules-permissions-interface": "^6.1.0",
-    "expo-updates": "~0.11.7"
+    "unimodules-permissions-interface": "^6.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

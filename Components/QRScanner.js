@@ -2,6 +2,7 @@ import { axiosInstance, beUrl } from "../config.js"
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Button, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
+import { Tooltip } from 'react-native-elements';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Avatar, Card, Title, Paragraph } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -227,6 +228,11 @@ export default function QRScanner({ user }) {
             {/* <Text>Benvenuto {user}!</Text> */}
             <FlashMessage position="top" style={{ zIndex: 1000 }} />
             {
+                Platform.OS !== 'ios' ? null : <Tooltip containerStyle={{ height: 200, width: 200 }} popover={<Text>La fotocamera dà la possibilità all'utente di scannerizzare il codice qr di un certo prodotto. Una volta visualizzato, l'utente può togliere la quantità richiesta</Text>}>
+                    <Icon name={"info-circle"} size={25} />
+                </Tooltip>
+            }
+            {
                 Platform.OS === 'android' ? <View style={{ marginTop: 20, flexDirection: 'row' }}>
                     <TouchableOpacity onPress={() => {
                         setToolFound({})
@@ -245,7 +251,7 @@ export default function QRScanner({ user }) {
                         <Icon name={"search"} size={25} />
                     </TouchableOpacity>
                 </View> :
-                    <View style={{ marginTop: 10, alignItems: 'center', justifyContent: 'center', width: "100%", zIndex: 0 }}>
+                    <View style={{ marginTop: 5, alignItems: 'center', justifyContent: 'center', width: "100%", zIndex: 0 }}>
                         <AutocompleteDropdown
                             clearOnFocus={false}
                             closeOnBlur={true}
