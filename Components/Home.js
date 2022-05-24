@@ -75,12 +75,17 @@ export default function Home({ user }) {
         //     </View>
         // </View>
         <View style={styles.container}>
-            <Text style={{ marginTop: 30, fontSize: 30, fontWeight: "bold" }}>Benvenuto {user}!</Text>
-            <Text style={{ marginTop: 40, fontSize: 15, marginBottom: 50 }}>Seleziona la sezione che vuoi visitare</Text>
             {
-                Platform.OS !== 'ios' ? null : <Tooltip containerStyle={{ height: 200, width: 200 }} popover={<Text>Sarà richiesto l'accesso alla telecamera. La fotocamera dà la possibilità all'utente di scannerizzare il codice qr di un certo prodotto (vedi sezione "QRScanner"). Una volta visualizzato, l'utente può togliere la quantità richiesta</Text>}>
+                user === "EXTERNAL" ? <Text style={{ marginTop: 30, fontSize: 30, fontWeight: "bold" }}>Ciao!</Text> : <Text style={{ marginTop: 30, fontSize: 30, fontWeight: "bold" }}>Benvenuto {user}!</Text>
+            }
+            {
+                user === "EXTERNAL" ? null : <Text style={{ marginTop: 40, fontSize: 15, marginBottom: 50 }}>Seleziona la sezione che vuoi visitare</Text>
+            }
+            {
+                Platform.OS !== 'ios' || user === "EXTERNAL" ? null : <View style={{ marginTop: 50 }}><Tooltip containerStyle={{ height: 200, width: 200 }} popover={<Text>Sarà richiesto l'accesso alla telecamera. La fotocamera dà la possibilità all'utente di scannerizzare il codice qr di un certo prodotto (vedi sezione "QRScanner"). Una volta visualizzato, l'utente può togliere la quantità richiesta</Text>}>
                     <Icon name={"info-circle"} size={25} />
                 </Tooltip>
+                </View>
             }
             {/* <View style={{ marginTop: 80, width: "100%" }}>
                 <Button title={'QR scanner'} onPress={() => goToQrscanner()} />

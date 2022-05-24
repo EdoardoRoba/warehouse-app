@@ -18,15 +18,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/idroaltech_logo.png",
+      "icon": "./assets/logo_ok.png",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow image picker? This allows you to upload images that you picked during installation.",
         "NSPhotoLibraryAddUsageDescription": "Allow image picker? This allows you to upload images that you picked during installation.",
         "NSCameraUsageDescription": "Allow camera? This allows you to scan qr codes of the tools in the warehouse.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.idroaltech.idroaltech",
-      "buildNumber": "1.0.6"
+      "bundleIdentifier": "com.idroaltech.magazzino",
+      "buildNumber": "1.0.5"
     },
     "android": {
       "package": "idroaltech.idroaltech",
