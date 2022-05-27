@@ -354,7 +354,7 @@ export default function QRScanner({ user }) {
                 {
                     Platform.OS !== 'android' ? <>
                         {
-                            (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={{ width: "90%" }}>
+                            (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={{ width: "90%" }}>
                                 {!toolFound || toolFound.label === undefined ? null :
                                     <SafeAreaView style={{ width: "100%" }}>
                                         <Card style={{ width: "100%" }}>
@@ -381,7 +381,7 @@ export default function QRScanner({ user }) {
                         }
                     </> : <>
                         {
-                            (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={{ width: "90%" }}>
+                            (notFound) ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: "80%" }}><Text style={{ color: "red" }}>prodotto non trovato! Controlla che il prodotto sia scritto correttamente.</Text></View> : <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={{ width: "90%" }}>
                                 {!toolFound || toolFound.label === undefined ? null :
                                     <SafeAreaView style={{ width: "100%" }}>
                                         {

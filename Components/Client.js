@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
         right: 0
     },
     scrollView: {
-        // marginHorizontal: 20,
-        // width: "100%",
+        marginTop: 40,
+        height: 500,
     },
     text: {
         fontSize: 42,
@@ -170,6 +170,8 @@ export default function Client(props) {
     const [openSopralluogo, setOpenSopralluogo] = React.useState(false);
     const [openInstallazione, setOpenInstallazione] = React.useState(false);
     const [openAssistenza, setOpenAssistenza] = React.useState(false);
+    const [openArgo, setOpenArgo] = React.useState(false);
+    const [openBuildAutomation, setOpenBuildAutomation] = React.useState(false);
     const [isVisible, setIsVisible] = React.useState(true);
     const [image, setImage] = React.useState(null);
     const [typology, setTypology] = React.useState("");
@@ -180,6 +182,8 @@ export default function Client(props) {
     const [modalVisibleInstallazione, setModalVisibleInstallazione] = React.useState(false);
     const [modalVisibleAssistenza, setModalVisibleAssistenza] = React.useState(false);
     const [modalVisibleDocumenti, setModalVisibleDocumenti] = React.useState(false);
+    const [modalVisibleArgo, setModalVisibleArgo] = React.useState(false);
+    const [modalVisibleBuildAutomation, setModalVisibleBuildAutomation] = React.useState(false);
     const [singleImage, setSingleImage] = React.useState("");
     const [allImages, setAllImages] = React.useState([]);
     const [openPhotos, setOpenPhotos] = React.useState(false);
@@ -187,6 +191,7 @@ export default function Client(props) {
     const [dataset, setDataset] = React.useState(null)
 
     const { navigate } = props.navigation;
+    const givenHeight = Platform.OS === 'android' ? "70%" : "30%"
 
     const PromiseHelperAllSettled = (promises) => {
         return Promise.all(promises.map(function (promise) {
@@ -287,24 +292,6 @@ export default function Client(props) {
 
     async function uploadImageAsync(ph) {
         return new Promise(async (resolve, reject) => {
-            // const blob = await new Promise((resolve, reject) => {
-            //     const xhr = new XMLHttpRequest();
-            //     xhr.onload = function () {
-            //         resolve(xhr.response);
-            //     };
-            //     xhr.ontimeout = function (e) {
-            //         console.log(e);
-            //         reject(new TypeError("Error timeout"));
-            //     };
-            //     xhr.onerror = function (e) {
-            //         // console.log(e);
-            //         reject(new TypeError("Error"));
-            //     };
-            //     xhr.responseType = "blob";
-            //     xhr.open("GET", ph.uri, true);
-            //     xhr.timeout = 1000 * 60;
-            //     xhr.send(null);
-            // });
             const img = await fetch(ph.uri);
             const blob = await img.blob();
             const now = Date.now()
@@ -446,7 +433,10 @@ export default function Client(props) {
                         Platform.OS === 'android' ?
                             <View>
                                 {
-                                    customerSelected.nome_cognome !== undefined ? <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setCustomerSelected({})}>
+                                    customerSelected.nome_cognome !== undefined ? <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => {
+                                        setCustomerSelected({})
+                                        checkUserExternal()
+                                    }}>
                                         <Icon name={"search"} size={25} style={{ marginTop: 10 }} />
                                     </TouchableOpacity>
                                         : <View
@@ -567,7 +557,7 @@ export default function Client(props) {
                 </Provider>
             }
             {
-                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", alignItems: 'center', zIndex: -1 }}>
+                customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: givenHeight, alignItems: 'center', zIndex: -1 }}>
                     <Title style={{ fontWeight: "bold", zIndex: -1 }}>{customerSelected.nome_cognome}</Title>
                     <Paragraph style={{ marginTop: 15, fontSize: 20, zIndex: -1 }}>{customerSelected.company}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline", zIndex: -1 }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
@@ -578,59 +568,90 @@ export default function Client(props) {
                         style={{ marginTop: 15, textDecorationLine: "underline", zIndex: -1 }}>{customerSelected.indirizzo} - {customerSelected.comune} - {customerSelected.provincia} - {customerSelected.cap}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 15, zIndex: -1 }}>{customerSelected.bonus} - {customerSelected.termico_elettrico}</Paragraph>
                     {
-                        Platform.OS === 'android' ? <>
-                            <View style={{ flexDirection: "column", marginTop: 40 }}>
-                                <View style={{ flexDirection: "row", zIndex: -1 }}>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen]}
-                                        onPress={() => {
-                                            setSection("sopralluogo")
-                                            setModalVisibleSopralluogo(true)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Sopralluogo</Text>
+                        Platform.OS === 'android' ?
+                            <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
+                                    <Pressable style={{ width: 300, height: 200, alignItems: "center" }}>
+                                        <View style={{ flexDirection: "column" }}>
+                                            <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen]}
+                                                    onPress={() => {
+                                                        setSection("sopralluogo")
+                                                        setModalVisibleSopralluogo(true)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Sopralluogo</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen]}
+                                                    onPress={() => {
+                                                        setSection("installazione")
+                                                        setModalVisibleInstallazione(true)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Installazione</Text>
+                                                </Pressable>
+                                            </View>
+                                        </View>
+                                        <View style={{ flexDirection: "column", marginTop: 20 }}>
+                                            <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                                {
+                                                    !customerSelected.isAssisted ? null : <Pressable
+                                                        style={[styles.button, styles.buttonOpen]}
+                                                        onPress={() => {
+                                                            setSection("assistenza")
+                                                            setModalVisibleAssistenza(true)
+                                                        }}
+                                                    >
+                                                        <Text style={styles.textStyle}>Assistenza</Text>
+                                                    </Pressable>
+                                                }
+                                                {
+                                                    user !== "admin" ? null : <Pressable
+                                                        style={[styles.button, styles.buttonOpen]}
+                                                        onPress={() => {
+                                                            setSection("documenti")
+                                                            setModalVisibleDocumenti(true)
+                                                        }}
+                                                    >
+                                                        <Text style={styles.textStyle}>Documenti</Text>
+                                                    </Pressable>
+                                                }
+                                            </View>
+                                        </View>
+                                        <View style={{ flexDirection: "column", marginTop: 20 }}>
+                                            <View style={{ flexDirection: "row", zIndex: -1 }}>
+                                                {
+                                                    !customerSelected.isArgo ? null : <Pressable
+                                                        style={[styles.button, styles.buttonOpen]}
+                                                        onPress={() => {
+                                                            setSection("argo")
+                                                            setModalVisibleArgo(true)
+                                                        }}
+                                                    >
+                                                        <Text style={styles.textStyle}>Argo</Text>
+                                                    </Pressable>
+                                                }
+                                                {
+                                                    !customerSelected.isBuildAutomation ? null : <Pressable
+                                                        style={[styles.button, styles.buttonOpen]}
+                                                        onPress={() => {
+                                                            setSection("buildAutomation")
+                                                            setModalVisibleBuildAutomation(true)
+                                                        }}
+                                                    >
+                                                        <Text style={styles.textStyle}>Building Automation</Text>
+                                                    </Pressable>
+                                                }
+                                            </View>
+                                        </View>
                                     </Pressable>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonOpen]}
-                                        onPress={() => {
-                                            setSection("installazione")
-                                            setModalVisibleInstallazione(true)
-                                        }}
-                                    >
-                                        <Text style={styles.textStyle}>Installazione</Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: "column", marginTop: 20 }}>
-                                <View style={{ flexDirection: "row", zIndex: -1 }}>
-                                    {
-                                        !customerSelected.isAssisted ? null : <Pressable
-                                            style={[styles.button, styles.buttonOpen]}
-                                            onPress={() => {
-                                                setSection("assistenza")
-                                                setModalVisibleAssistenza(true)
-                                            }}
-                                        >
-                                            <Text style={styles.textStyle}>Assistenza</Text>
-                                        </Pressable>
-                                    }
-                                    {
-                                        user !== "admin" ? null : <Pressable
-                                            style={[styles.button, styles.buttonOpen]}
-                                            onPress={() => {
-                                                setSection("documenti")
-                                                setModalVisibleDocumenti(true)
-                                            }}
-                                        >
-                                            <Text style={styles.textStyle}>Documenti</Text>
-                                        </Pressable>
-                                    }
-                                </View>
-                            </View>
-                        </>
+                                </ScrollView>
+                            </SafeAreaView>
                             :
                             <>
-                                <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto', zIndex: -1 }}>
+                                <View style={{ marginTop: 20, marginLeft: 'auto', marginRight: 'auto', zIndex: -1 }}>
                                     <View style={{ flexDirection: "row", zIndex: -1 }}>
                                         <Pressable
                                             style={[styles.button, styles.buttonOpen]}
@@ -643,7 +664,7 @@ export default function Client(props) {
                                         </Pressable>
                                     </View>
                                 </View>
-                                <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                <View style={{ marginTop: 10, marginLeft: 'auto', marginRight: 'auto' }}>
                                     <View style={{ flexDirection: "row", }}>
                                         <Pressable
                                             style={[styles.button, styles.buttonOpen]}
@@ -657,7 +678,7 @@ export default function Client(props) {
                                     </View>
                                 </View>
                                 {
-                                    !customerSelected.isAssisted ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                    !customerSelected.isAssisted ? null : <View style={{ marginTop: 10, marginLeft: 'auto', marginRight: 'auto' }}>
                                         <View style={{ flexDirection: "row", }}>
                                             <Pressable
                                                 style={[styles.button, styles.buttonOpen]}
@@ -672,7 +693,7 @@ export default function Client(props) {
                                     </View>
                                 }
                                 {
-                                    user !== "admin" ? null : <View style={{ marginTop: 40, marginLeft: 'auto', marginRight: 'auto' }}>
+                                    user !== "admin" ? null : <View style={{ marginTop: 10, marginLeft: 'auto', marginRight: 'auto' }}>
                                         <View style={{ flexDirection: "row", }}>
                                             <Pressable
                                                 style={[styles.button, styles.buttonOpen]}
@@ -682,6 +703,36 @@ export default function Client(props) {
                                                 }}
                                             >
                                                 <Text style={styles.textStyle}>Documenti</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                }
+                                {
+                                    !customerSelected.isArgo ? null : <View style={{ marginTop: 10, marginLeft: 'auto', marginRight: 'auto' }}>
+                                        <View style={{ flexDirection: "row", }}>
+                                            <Pressable
+                                                style={[styles.button, styles.buttonOpen]}
+                                                onPress={() => {
+                                                    setSection("argo")
+                                                    setModalVisibleArgo(true)
+                                                }}
+                                            >
+                                                <Text style={styles.textStyle}>Argo</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                }
+                                {
+                                    !customerSelected.isBuildAutomation ? null : <View style={{ marginTop: 10, marginLeft: 'auto', marginRight: 'auto' }}>
+                                        <View style={{ flexDirection: "row", }}>
+                                            <Pressable
+                                                style={[styles.button, styles.buttonOpen]}
+                                                onPress={() => {
+                                                    setSection("buildAutomation")
+                                                    setModalVisibleBuildAutomation(true)
+                                                }}
+                                            >
+                                                <Text style={styles.textStyle}>Building Automation</Text>
                                             </Pressable>
                                         </View>
                                     </View>
@@ -773,6 +824,56 @@ export default function Client(props) {
                                         renderItem={(i) => {
                                             return <Pressable
                                                 onPress={() => imagesToShow(customerSelected.foto_assistenza, i.item)}
+                                            >
+                                                <Image
+                                                    style={styles.tinyLogo}
+                                                    source={{ uri: i.item }}
+                                                />
+                                            </Pressable>
+                                        }}
+                                    />
+                            }
+                        </Dialog>
+                    </Portal>
+                </Provider>
+            }
+            {
+                (customerSelected === undefined || customerSelected.foto_argo === undefined) ? null : <Provider>
+                    <Portal>
+                        <Dialog visible={openArgo} onDismiss={() => { setOpenArgo(false) }} style={{ height: "100%" }}>
+                            {
+                                customerSelected.foto_argo.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_argo} visible={openAssistenza} />
+                                    <FlatGrid
+                                        itemDimension={80}
+                                        data={customerSelected.foto_argo}
+                                        renderItem={(i) => {
+                                            return <Pressable
+                                                onPress={() => imagesToShow(customerSelected.foto_argo, i.item)}
+                                            >
+                                                <Image
+                                                    style={styles.tinyLogo}
+                                                    source={{ uri: i.item }}
+                                                />
+                                            </Pressable>
+                                        }}
+                                    />
+                            }
+                        </Dialog>
+                    </Portal>
+                </Provider>
+            }
+            {
+                (customerSelected === undefined || customerSelected.foto_buildAutomation === undefined) ? null : <Provider>
+                    <Portal>
+                        <Dialog visible={openBuildAutomation} onDismiss={() => { setOpenBuildAutomation(false) }} style={{ height: "100%" }}>
+                            {
+                                customerSelected.foto_buildAutomation.length === 0 ? <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }}><Text>Non sono presenti foto.</Text></View> : // <GridImageView transparent={1} enableImageZoom={true} data={customerSelected.foto_buildAutomation} visible={openAssistenza} />
+                                    <FlatGrid
+                                        itemDimension={80}
+                                        data={customerSelected.foto_buildAutomation}
+                                        renderItem={(i) => {
+                                            return <Pressable
+                                                onPress={() => imagesToShow(customerSelected.foto_buildAutomation, i.item)}
                                             >
                                                 <Image
                                                     style={styles.tinyLogo}
@@ -892,7 +993,7 @@ export default function Client(props) {
                             <Title style={styles.modalText}>Installazione</Title>
                             <View>
                                 <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
-                                    <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
+                                    <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
                                         <Pressable style={{ width: 300, alignItems: "center" }}>
                                             <View style={{ maxWidth: 300 }}>
                                                 <View style={{ marginTop: 10, flexDirection: "row", marginRight: "auto" }}>
@@ -977,7 +1078,7 @@ export default function Client(props) {
                             <Title style={styles.modalText}>Assistenza</Title>
                             <View>
                                 <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
-                                    <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
+                                    <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
                                         <Pressable>
                                             <View style={{ flexDirection: "column" }}>
                                                 <Pressable
@@ -1059,7 +1160,7 @@ export default function Client(props) {
                             <Title style={styles.modalText}>Documenti</Title>
                             <View>
                                 <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
-                                    <ScrollView showsVerticalScrollIndicator={true} persistentScrollbar={true} style={styles.scrollView}>
+                                    <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
                                         <Pressable>
                                             <View>
                                                 <View style={{ marginTop: 15, flexDirection: "row", marginRight: "auto" }}>
@@ -1166,6 +1267,170 @@ export default function Client(props) {
                                                     <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_pagamenti}</Text>
                                                 </View>
                                             </View>
+                                        </Pressable>
+                                    </ScrollView>
+                                </SafeAreaView>
+                            </View>
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                visible={modalVisibleArgo}
+                onRequestClose={() => setModalVisibleArgo(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setModalVisibleArgo(false);
+                        }
+                    }} >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setModalVisibleArgo(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
+                            <Title style={styles.modalText}>Argo</Title>
+                            <View>
+                                <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                    <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
+                                        <Pressable>
+                                            <View style={{ flexDirection: "column" }}>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
+                                                    onPress={() => {
+                                                        setModalImages(true)
+                                                        setOpenArgo(true)
+                                                        createImagesToShow(customerSelected.foto_argo)
+                                                        setModalVisibleArgo(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen]}
+                                                    onPress={() => {
+                                                        pickImage("foto_argo")
+                                                        setModalVisibleArgo(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                                </Pressable>
+                                            </View>
+                                            <View style={{ marginTop: 10 }}>
+                                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Data:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.data_argo}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Tecnico:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.tecnico_argo}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_argo}</Text>
+                                                </View>
+                                            </View>
+                                            {
+                                                customerSelected.argo_pdf === undefined ? null : <View>
+                                                    {
+                                                        customerSelected.argo_pdf.length === 0 || customerSelected.argo_pdf[0] === "" ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                                            <View style={{ marginTop: 20 }}>
+                                                                {
+                                                                    customerSelected.argo_pdf.map((pi, idx) => {
+                                                                        return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
+                                        </Pressable>
+                                    </ScrollView>
+                                </SafeAreaView>
+                            </View>
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                visible={modalVisibleBuildAutomation}
+                onRequestClose={() => setModalVisibleBuildAutomation(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setModalVisibleBuildAutomation(false);
+                        }
+                    }} >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setModalVisibleBuildAutomation(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
+                            <Title style={styles.modalText}>Building Automation</Title>
+                            <View>
+                                <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                    <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
+                                        <Pressable>
+                                            <View style={{ flexDirection: "column" }}>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
+                                                    onPress={() => {
+                                                        setModalImages(true)
+                                                        setOpenBuildAutomation(true)
+                                                        createImagesToShow(customerSelected.foto_buildAutomation)
+                                                        setModalVisibleBuildAutomation(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Apri foto</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[styles.button, styles.buttonOpen]}
+                                                    onPress={() => {
+                                                        pickImage("foto_buildAutomation")
+                                                        setModalVisibleBuildAutomation(false)
+                                                    }}
+                                                >
+                                                    <Text style={styles.textStyle}>Carica foto</Text>
+                                                </Pressable>
+                                            </View>
+                                            <View style={{ marginTop: 10 }}>
+                                                <View style={{ marginTop: 20, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Data:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.data_buildAutomation}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Tecnico:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.tecnico_buildAutomation}</Text>
+                                                </View>
+                                                <View style={{ marginTop: 5, flexDirection: "row", marginRight: "auto" }}>
+                                                    <Text style={{ color: 'blue', marginBottom: 5, fontSize: 20 }}>Note:</Text><Text style={{ marginLeft: 5, fontSize: 20 }}>{customerSelected.note_buildAutomation}</Text>
+                                                </View>
+                                            </View>
+                                            {
+                                                customerSelected.buildAutomation_pdf === undefined ? null : <View>
+                                                    {
+                                                        customerSelected.buildAutomation_pdf.length === 0 || customerSelected.buildAutomation_pdf[0] === "" ? <Text style={{ color: "blue", marginTop: 20 }}>(no pdf)</Text> :
+                                                            <View style={{ marginTop: 20 }}>
+                                                                {
+                                                                    customerSelected.buildAutomation_pdf.map((pi, idx) => {
+                                                                        return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
+                                                                            onPress={() => Linking.openURL(pi)}>
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
+                                                                        </Text>
+                                                                    })
+                                                                }
+                                                            </View>
+                                                    }
+                                                </View>
+                                            }
                                         </Pressable>
                                     </ScrollView>
                                 </SafeAreaView>
