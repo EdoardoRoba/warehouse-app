@@ -959,7 +959,7 @@ export default function ClientCalendar(props) {
                                 <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
                                     <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
                                         <Pressable>
-                                            <View style={{ flexDirection: "columns", }}>
+                                            <View style={{ flexDirection: "column" }}>
                                                 <Pressable
                                                     style={[styles.button, styles.buttonOpen, { marginBottom: 5 }]}
                                                     onPress={() => {
@@ -1001,7 +1001,7 @@ export default function ClientCalendar(props) {
                                                                     customerSelected.assistenza.map((pi, idx) => {
                                                                         return <Text style={{ color: 'blue', marginBottom: 5, textDecorationLine: "underline", fontSize: 20 }}
                                                                             onPress={() => Linking.openURL(pi)}>
-                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
+                                                                            {pi.split("%2F")[2].split("?alt")[0].replace("%20", " ").replace("%20", " ").replace("%20", " ").replace("%20", " ")}
                                                                         </Text>
                                                                     })
                                                                 }
