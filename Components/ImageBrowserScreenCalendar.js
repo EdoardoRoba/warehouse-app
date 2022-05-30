@@ -4,6 +4,10 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { ImageBrowser } from 'expo-image-picker-multiple';
 
 export default function ImageBrowserScreenCalendar(props) {
+
+    const compress = Platform.OS === 'android' ? 0.8 : 0.4
+    const resize = Platform.OS === 'android' ? 1 : 0.3
+
     const getHeaderLoader = () => (
         <ActivityIndicator size='small' color={'#0580FF'} />
     );
@@ -17,7 +21,7 @@ export default function ImageBrowserScreenCalendar(props) {
         callback.then(async (photos) => {
             const cPhotos = [];
             for (let photo of photos) {
-                const pPhoto = await processImageAsync(photo.uri);
+                const pPhoto = await processImageAsync(photo.uri, photo);
                 cPhotos.push({
                     uri: pPhoto.uri,
                     name: photo.filename,
@@ -31,11 +35,11 @@ export default function ImageBrowserScreenCalendar(props) {
             .catch((e) => console.log(e));
     };
 
-    const processImageAsync = async (uri) => {
+    const processImageAsync = async (uri, ph) => {
         const file = await ImageManipulator.manipulateAsync(
             uri,
-            [{ resize: { width: 1000 } }],
-            { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+            [{ resize: { width: ph.width * resize, height: ph.height * resize } }],
+            { compress: compress, format: ImageManipulator.SaveFormat.JPEG, base64: true }
         );
         return file;
     };
