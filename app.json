@@ -2,7 +2,7 @@
   "expo": {
     "name": "idroaltech",
     "slug": "idroaltech",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/logo_ok.png",
+      "icon": "./assets/logo_app.png",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow image picker? This allows you to upload images that you picked during installation.",
         "NSPhotoLibraryAddUsageDescription": "Allow image picker? This allows you to upload images that you picked during installation.",
@@ -26,7 +26,7 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.idroaltech.magazzino",
-      "buildNumber": "2.0.2"
+      "buildNumber": "2.0.5"
     },
     "android": {
       "package": "idroaltech.idroaltech",
