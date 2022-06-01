@@ -7,6 +7,7 @@ import Admin from './Admin';
 import QRScanner from './QRScanner';
 import Home from './Home';
 import Client from './Client';
+import PDFCompiler from './PDFCompiler';
 import HomeClient from './HomeClient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HomeCalendar from './HomeCalendar';
@@ -28,6 +29,8 @@ export default function Tabs({ user }) {
                             iconName = "home"
                         } else if (route.name === 'Admin') {
                             iconName = "gear"
+                        } else if (route.name === 'Compila PDF') {
+                            iconName = "file-text"
                         } else if (route.name === 'QRScanner') {
                             iconName = "qrcode"
                         } else if (route.name === 'Clienti') {
@@ -56,8 +59,11 @@ export default function Tabs({ user }) {
             }
         >
             <Tab.Screen name="Home" children={() => <Home user={user} />} />
-            {
+            {/* {
                 user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
+            } */}
+            {
+                user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Compila PDF" children={() => <PDFCompiler user={user} />} />
             }
             {
                 user === "surra" || user === "EXTERNAL" ? null : <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
