@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Admin from './Admin';
 import QRScanner from './QRScanner';
 import Home from './Home';
+import HomePdf from './HomePdf';
 import Client from './Client';
 import PDFCompiler from './PDFCompiler';
 import HomeClient from './HomeClient';
@@ -63,7 +64,7 @@ export default function Tabs({ user }) {
                 user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
             } */}
             {
-                user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Compila PDF" children={() => <PDFCompiler user={user} />} />
+                user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Compila PDF" children={() => <HomePdf user={user} />} />
             }
             {
                 user === "surra" || user === "EXTERNAL" ? null : <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />
