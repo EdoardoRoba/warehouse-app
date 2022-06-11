@@ -34,7 +34,9 @@ export default function Review(props) {
     const { navigate } = props.navigation;
 
     props.navigation.setOptions({
-        headerRight: () => renderDoneButton()
+        headerRight: () => <TouchableOpacity title={'Firma'} onPress={goTo}>
+            <Text onPress={goTo}>Firma</Text>
+        </TouchableOpacity>
     });
 
     const renderDoneButton = () => {

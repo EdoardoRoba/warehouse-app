@@ -300,7 +300,7 @@ export default function PDFCompiler(props) {
             {
                 customerSelected === "" ? null : <View
                     style={{
-                        marginTop: 150,
+                        marginTop: 120, //150
                         flexDirection: 'column',
                         justifyContent: 'center',
                         width: "80%",

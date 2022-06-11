@@ -51,10 +51,10 @@ const styles = StyleSheet.create({
 export default function Signature(props) {
 
     const [stopNext, setStopNext] = React.useState(false);
-    const [formTemplate, setFormTemplate] = React.useState(props.route.params.formTemplate);
-    const [customerSelected, setCustomerSelected] = React.useState(props.route.params.customerSelected);
-    const [token, setToken] = React.useState(props.route.params.token);
-    const [user, setUser] = React.useState(props.route.params.user);
+    const [formTemplate, setFormTemplate] = React.useState();
+    const [customerSelected, setCustomerSelected] = React.useState();
+    const [token, setToken] = React.useState();
+    const [user, setUser] = React.useState();
     const [tempValues, setTempValues] = React.useState();
     const [signatureCliente, setSignatureCliente] = React.useState(null);
     const [signatureTecnico, setSignatureTecnico] = React.useState(null);
@@ -71,9 +71,16 @@ export default function Signature(props) {
     const refTecnico = React.useRef();
     const style = `.m-signature-pad--footer {display: none; margin: 0px}`;
 
-    props.navigation.setOptions({
-        headerRight: () => renderDoneButton()
-    });
+    React.useEffect(() => {
+        setFormTemplate(props.route.params.formTemplate)
+        setCustomerSelected(props.route.params.customerSelected)
+        setToken(props.route.params.token)
+        setUser(props.route.params.user)
+
+        props.navigation.setOptions({
+            headerRight: () => renderDoneButtonSign()
+        });
+    }, []);
 
     React.useEffect(() => {
         if (clienteUploaded && tecnicoUploaded) {
@@ -91,17 +98,17 @@ export default function Signature(props) {
         }
     }, [signatureCliente, signatureTecnico]);
 
-    const renderDoneButton = () => {
+    const renderDoneButtonSign = () => {
         if (isLoadingPdf) {
             return null
         } else {
-            return <TouchableOpacity title={'Invia'} onPress={goTo}>
-                <Text onPress={goTo}>Invia</Text>
+            return <TouchableOpacity title={'Invia'} onPress={goToSign}>
+                <Text onPress={goToSign}>Invia</Text>
             </TouchableOpacity>
         }
     }
 
-    const goTo = async () => {
+    const goToSign = async () => {
         setIsLoading(true)
         let ok1 = await refCliente.current.readSignature()
         let ok2 = await refTecnico.current.readSignature()
@@ -111,6 +118,7 @@ export default function Signature(props) {
     const uploadClienteSignature = () => {
         setIsLoading(true)
         return new Promise(async (resolve, reject) => {
+            console.log(signatureCliente)
             const imgCliente = await fetch(signatureCliente);
             const blobCliente = await imgCliente.blob();
             const storageRefCliente = ref(storage, '/files/' + customerSelected.nome_cognome + '/signature')
@@ -334,62 +342,89 @@ export default function Signature(props) {
                     <Title>Caricamento in corso...</Title>
                     <Title>attendere</Title>
                 </View> : <>
-                    <View style={{ marginBottom: 200 }}>
-                        <Title>Firma cliente</Title>
-                        <View>
+                    {
+                        Platform.OS === 'android' ? <>
+                            <Text>Cliente</Text>
                             <SignatureScreen
                                 ref={refCliente}
                                 onOK={handleSignatureCliente}
+                                // androidHardwareAccelerationDisabled={true}
                                 // onClear={handleClear}
+                                descriptionText="Firma cliente"
                                 webStyle={style}
                                 style={{
                                     "position": "absolute",
                                     "left": 0,
                                     "top": 0,
                                     "width": 400,
-                                    "height": 200,
+                                    "height": 150,
                                 }}
                             />
-                            <View style={styles.row}>
-                                <Button onPress={handleClearCliente}>Cancella</Button>
-                                {/* <Button onPress={handleConfirmCliente}>Confirm</Button> */}
-                            </View>
-                            {/* {
-                        signatureCliente ? <Image
-                            style={styles.tinyLogo}
-                            source={{ uri: signatureCliente }}
-                        /> : null
-                    } */}
-                        </View>
-                    </View>
-                    <View>
-                        <Title>Firma tecnico</Title>
-                        <View>
+                            <Text>Tecnico</Text>
                             <SignatureScreen
                                 ref={refTecnico}
                                 onOK={handleSignatureTecnico}
+                                // androidHardwareAccelerationDisabled={true}
                                 // onClear={handleClear}
+                                descriptionText="Firma tecnico"
                                 webStyle={style}
                                 style={{
                                     "position": "absolute",
                                     "left": 0,
                                     "top": 0,
                                     "width": 400,
-                                    "height": 200,
+                                    "height": 150,
                                 }}
                             />
-                            <View style={styles.row}>
-                                <Button onPress={handleClearTecnico}>Cancella</Button>
-                                {/* <Button onPress={handleConfirmTecnico}>Confirm</Button> */}
+                        </> : <>
+                            <View style={{ marginBottom: 200 }}>
+                                <Title>Firma cliente</Title>
+                                <View>
+                                    <SignatureScreen
+                                        ref={refCliente}
+                                        onOK={handleSignatureCliente}
+                                        // androidHardwareAccelerationDisabled={true}
+                                        // onClear={handleClear}
+                                        webStyle={style}
+                                        style={{
+                                            "position": "absolute",
+                                            "left": 0,
+                                            "top": 0,
+                                            "width": 400,
+                                            "height": 200,
+                                        }}
+                                    />
+                                    <View style={styles.row}>
+                                        <Button onPress={handleClearCliente}>Cancella</Button>
+                                    </View>
+                                </View>
                             </View>
-                            {/* {
-                        signatureTecnico ? <Image
-                            style={styles.tinyLogo}
-                            source={{ uri: signatureTecnico }}
-                        /> : null
-                    } */}
-                        </View>
-                    </View>
+                            <View>
+                                <Title>Firma tecnico</Title>
+                                <View>
+                                    <SignatureScreen
+                                        ref={refTecnico}
+                                        // opacity={0.99}
+                                        onOK={handleSignatureTecnico}
+                                        androidHardwareAccelerationDisabled={true}
+                                        // onClear={handleClear}
+                                        // webStyle={style}
+                                        style={{
+                                            "position": "absolute",
+                                            "left": 0,
+                                            "top": 0,
+                                            "width": 400,
+                                            "height": 200,
+                                        }}
+                                    />
+                                    <View style={styles.row}>
+                                        <Button onPress={handleClearTecnico}>Cancella</Button>
+                                    </View>
+                                </View>
+                            </View>
+                        </>
+                    }
+
                 </>
             }
 

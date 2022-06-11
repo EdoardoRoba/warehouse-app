@@ -100,9 +100,11 @@ export default function FillInForm(props) {
 
     const onNextStep = (idxSection) => {
         const asArray = Object.entries(tempValues)
-        let missingValues = asArray.filter(([name, f]) => {
-            return (f.value === "" && f.required && f.section.toString() === idxSection.toString())
-        })
+        // let missingValues = asArray.filter(([name, f]) => {
+        //     return (f.value === "" && f.required && f.section.toString() === idxSection.toString())
+        // })
+
+        let missingValues = []
         if (missingValues.length > 0) {
             setStopNext(true)
             console.log("error!")
