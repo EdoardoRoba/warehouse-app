@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import Login from '../components/Login'
 import Route from "../components/Route";
 import Logout from "../components/Logout";
+import Home from "../components/Home";
 
 const screens = {
     Login: {
@@ -24,6 +25,12 @@ const screens = {
                 </TouchableOpacity>
             ),
             headerLeft: null
+        })
+    },
+    Home: {
+        screen: Home,
+        navigationOptions: ({ navigation }) => ({
+            title: null
         })
     },
 }

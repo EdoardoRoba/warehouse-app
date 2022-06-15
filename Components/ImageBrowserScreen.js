@@ -5,8 +5,8 @@ import { ImageBrowser } from 'expo-image-picker-multiple';
 
 export default function ImageBrowserScreen(props) {
 
-    const compress = Platform.OS === 'android' ? 0.8 : 0.1
-    const resize = Platform.OS === 'android' ? 1 : 0.3
+    const compress = Platform.OS === 'android' ? 0.8 : 0.3
+    const resize = Platform.OS === 'android' ? 1 : 0.5
 
     const getHeaderLoader = () => (
         <ActivityIndicator size='small' color={'#0580FF'} />

@@ -123,7 +123,7 @@ export default function MyCalendar(props) {
                 }
                 let period = {}
                 let item = {}
-                item = { name: e.title, height: 20, dateString: dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0"), type: e.type, customerId: e.customer._id, employees: e.employees.map((e) => e.lastName).join("-"), start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
+                item = { name: e.title + "\n\nINIZIO: " + new Date(e.end).toLocaleString('it-IT').split(", ")[1], height: 20, dateString: dt.getFullYear().toString() + "-" + (dt.getMonth() + 1).toString().padStart(2, "0") + "-" + dt.getDate().toString().padStart(2, "0"), type: e.type, customerId: e.customer._id, employees: e.employees.map((e) => e.lastName).join("-"), start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
                 if (dt === new Date(e.start)) {
                     period = { startingDay: true, endingDay: false, color: col, id: e._id, customer: e.customer.nome_cognome, title: e.title, type: e.type, customerId: e.customer._id, start: new Date(e.start).toLocaleString('it-IT'), end: new Date(e.end).toLocaleString('it-IT') }
                 } else if (dt === new Date(e.end)) {

@@ -26,7 +26,7 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.idroaltech.magazzino",
-      "buildNumber": "2.0.5"
+      "buildNumber": "2.0.6"
     },
     "android": {
       "package": "idroaltech.idroaltech",

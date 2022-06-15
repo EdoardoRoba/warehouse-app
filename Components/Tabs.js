@@ -15,7 +15,7 @@ import HomeCalendar from './HomeCalendar';
 
 const Tab = createBottomTabNavigator();
 
-export default function Tabs({ user }) {
+export default function Tabs({ user, navigation }) {
 
     // Return the SafeAreaView
     return (
@@ -59,7 +59,7 @@ export default function Tabs({ user }) {
 
             }
         >
-            <Tab.Screen name="Home" children={() => <Home user={user} />} />
+            <Tab.Screen name="Home" children={() => <Home user={user} navigation={navigation} />} />
             {/* {
                 user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
             } */}

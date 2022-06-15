@@ -86,7 +86,7 @@ export default function Login({ navigation }) {
                 if (response.data.profile !== "external") {
                     navigation.navigate("Route", { user: usr })
                 } else {
-                    navigation.navigate("Route", { user: "EXTERNAL" })
+                    navigation.navigate("Route", { user: "EXTERNAL", username: usr })
                 }
             }).catch(error => {
                 setIsLoading(false)
@@ -106,7 +106,7 @@ export default function Login({ navigation }) {
                 setPassword("")
                 AsyncStorage.setItem("token", response.data.token)
                 AsyncStorage.setItem("user", username)
-                navigation.navigate("Route", { user: "EXTERNAL" })
+                navigation.navigate("Route", { user: "EXTERNAL", username: username })
             }).catch(error => {
                 setIsLoading(false)
                 setShowError(true)

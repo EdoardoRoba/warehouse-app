@@ -9,7 +9,7 @@ export default function Route({ navigation }) {
     // Return the SafeAreaView
     return (
         <NavigationContainer>
-            <Tabs user={navigation.getParam("user")} />
+            <Tabs user={navigation.getParam("user")} navigation={navigation} />
         </NavigationContainer>
     );
 }

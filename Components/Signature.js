@@ -71,6 +71,8 @@ export default function Signature(props) {
     const refTecnico = React.useRef();
     const style = `.m-signature-pad--footer {display: none; margin: 0px}`;
 
+    console.log("hello1")
+
     React.useEffect(() => {
         setFormTemplate(props.route.params.formTemplate)
         setCustomerSelected(props.route.params.customerSelected)
@@ -110,6 +112,7 @@ export default function Signature(props) {
 
     const goToSign = async () => {
         setIsLoading(true)
+        console.log("here")
         let ok1 = await refCliente.current.readSignature()
         let ok2 = await refTecnico.current.readSignature()
         setIsLoading(false)
@@ -117,9 +120,12 @@ export default function Signature(props) {
 
     const uploadClienteSignature = () => {
         setIsLoading(true)
+        console.log("hello1")
         return new Promise(async (resolve, reject) => {
-            console.log(signatureCliente)
+            // console.log(signatureCliente)
+            console.log("hello")
             const imgCliente = await fetch(signatureCliente);
+            console.log("ciao")
             const blobCliente = await imgCliente.blob();
             const storageRefCliente = ref(storage, '/files/' + customerSelected.nome_cognome + '/signature')
             const uploadTaskCliente = uploadBytesResumable(storageRefCliente, blobCliente)
@@ -148,6 +154,7 @@ export default function Signature(props) {
 
     const uploadTecnicoSignature = () => {
         setIsLoading(true)
+        console.log("hello2")
         return new Promise(async (resolve, reject) => {
             let ok = await refTecnico.current.readSignature()
             const imgTecnico = await fetch(signatureTecnico);
@@ -342,89 +349,38 @@ export default function Signature(props) {
                     <Title>Caricamento in corso...</Title>
                     <Title>attendere</Title>
                 </View> : <>
-                    {
-                        Platform.OS === 'android' ? <>
-                            <Text>Cliente</Text>
-                            <SignatureScreen
-                                ref={refCliente}
-                                onOK={handleSignatureCliente}
-                                // androidHardwareAccelerationDisabled={true}
-                                // onClear={handleClear}
-                                descriptionText="Firma cliente"
-                                webStyle={style}
-                                style={{
-                                    "position": "absolute",
-                                    "left": 0,
-                                    "top": 0,
-                                    "width": 400,
-                                    "height": 150,
-                                }}
-                            />
-                            <Text>Tecnico</Text>
-                            <SignatureScreen
-                                ref={refTecnico}
-                                onOK={handleSignatureTecnico}
-                                // androidHardwareAccelerationDisabled={true}
-                                // onClear={handleClear}
-                                descriptionText="Firma tecnico"
-                                webStyle={style}
-                                style={{
-                                    "position": "absolute",
-                                    "left": 0,
-                                    "top": 0,
-                                    "width": 400,
-                                    "height": 150,
-                                }}
-                            />
-                        </> : <>
-                            <View style={{ marginBottom: 200 }}>
-                                <Title>Firma cliente</Title>
-                                <View>
-                                    <SignatureScreen
-                                        ref={refCliente}
-                                        onOK={handleSignatureCliente}
-                                        // androidHardwareAccelerationDisabled={true}
-                                        // onClear={handleClear}
-                                        webStyle={style}
-                                        style={{
-                                            "position": "absolute",
-                                            "left": 0,
-                                            "top": 0,
-                                            "width": 400,
-                                            "height": 200,
-                                        }}
-                                    />
-                                    <View style={styles.row}>
-                                        <Button onPress={handleClearCliente}>Cancella</Button>
-                                    </View>
-                                </View>
-                            </View>
-                            <View>
-                                <Title>Firma tecnico</Title>
-                                <View>
-                                    <SignatureScreen
-                                        ref={refTecnico}
-                                        // opacity={0.99}
-                                        onOK={handleSignatureTecnico}
-                                        androidHardwareAccelerationDisabled={true}
-                                        // onClear={handleClear}
-                                        // webStyle={style}
-                                        style={{
-                                            "position": "absolute",
-                                            "left": 0,
-                                            "top": 0,
-                                            "width": 400,
-                                            "height": 200,
-                                        }}
-                                    />
-                                    <View style={styles.row}>
-                                        <Button onPress={handleClearTecnico}>Cancella</Button>
-                                    </View>
-                                </View>
-                            </View>
-                        </>
-                    }
-
+                    <Text>Cliente</Text>
+                    <SignatureScreen
+                        ref={refCliente}
+                        onOK={handleSignatureCliente}
+                        // androidHardwareAccelerationDisabled={true}
+                        // onClear={handleClear}
+                        descriptionText="Firma cliente"
+                        webStyle={style}
+                        style={{
+                            "position": "absolute",
+                            "left": 0,
+                            "top": 0,
+                            "width": 400,
+                            "height": 150,
+                        }}
+                    />
+                    <Text>Tecnico</Text>
+                    <SignatureScreen
+                        ref={refTecnico}
+                        onOK={handleSignatureTecnico}
+                        // androidHardwareAccelerationDisabled={true}
+                        // onClear={handleClear}
+                        descriptionText="Firma tecnico"
+                        webStyle={style}
+                        style={{
+                            "position": "absolute",
+                            "left": 0,
+                            "top": 0,
+                            "width": 400,
+                            "height": 150,
+                        }}
+                    />
                 </>
             }
 
