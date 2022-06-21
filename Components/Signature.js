@@ -1,11 +1,16 @@
+import axios from "axios"
 import { axiosInstance, beUrl } from "../config.js"
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, Alert, Linking, SafeAreaView, StatusBar, ScrollView, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Alert, Linking, SafeAreaView, StatusBar, ScrollView, Image, Modal, Pressable, TouchableOpacity, Platform } from 'react-native';
 import { Title, TextInput, Card, Paragraph, Button } from 'react-native-paper';
 import SignatureScreen from "react-native-signature-canvas";
 import ExpoPixi from 'expo-pixi'
 import { getDownloadURL, ref, uploadBytesResumable, getStorage, deleteObject, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
+import { decode, encode } from 'base-64'
+import * as FileSystem from 'expo-file-system'
+import * as MediaLibrary from 'expo-media-library'
+import * as Sharing from 'expo-sharing';
 
 const styles = StyleSheet.create({
     container: {
@@ -34,6 +39,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         width: "100%",
         alignItems: "center",
+        marginBottom: Platform.OS === 'android' ? 60 : 30
     },
     overlayLoadingContainer: {
         position: 'absolute',
@@ -55,6 +61,7 @@ export default function Signature(props) {
     const [customerSelected, setCustomerSelected] = React.useState();
     const [token, setToken] = React.useState();
     const [user, setUser] = React.useState();
+    const [allAltro, setAllAltro] = React.useState();
     const [tempValues, setTempValues] = React.useState();
     const [signatureCliente, setSignatureCliente] = React.useState(null);
     const [signatureTecnico, setSignatureTecnico] = React.useState(null);
@@ -71,13 +78,18 @@ export default function Signature(props) {
     const refTecnico = React.useRef();
     const style = `.m-signature-pad--footer {display: none; margin: 0px}`;
 
-    console.log("hello1")
+    if (!global.btoa) { global.btoa = encode }
+
+    if (!global.atob) { global.atob = decode }
 
     React.useEffect(() => {
         setFormTemplate(props.route.params.formTemplate)
         setCustomerSelected(props.route.params.customerSelected)
         setToken(props.route.params.token)
         setUser(props.route.params.user)
+        setAllAltro(props.route.params.allAltro)
+
+        // console.log(props.route.params.formTemplate)
 
         props.navigation.setOptions({
             headerRight: () => renderDoneButtonSign()
@@ -112,7 +124,6 @@ export default function Signature(props) {
 
     const goToSign = async () => {
         setIsLoading(true)
-        console.log("here")
         let ok1 = await refCliente.current.readSignature()
         let ok2 = await refTecnico.current.readSignature()
         setIsLoading(false)
@@ -120,67 +131,146 @@ export default function Signature(props) {
 
     const uploadClienteSignature = () => {
         setIsLoading(true)
-        console.log("hello1")
         return new Promise(async (resolve, reject) => {
-            // console.log(signatureCliente)
-            console.log("hello")
-            const imgCliente = await fetch(signatureCliente);
-            console.log("ciao")
-            const blobCliente = await imgCliente.blob();
-            const storageRefCliente = ref(storage, '/files/' + customerSelected.nome_cognome + '/signature')
-            const uploadTaskCliente = uploadBytesResumable(storageRefCliente, blobCliente)
-            uploadTaskCliente.on("state_changed", (snapshot) => {
-                // console.log("Uploading...")
-                // console.log("ph:", ph)
-            }, (error) => {
-                console.log("error: ", error)
-                setIsLoading(false)
-                blobCliente.close();
-                reject(error);
-            },
-                () => {
-                    //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
-                    getDownloadURL(uploadTaskCliente.snapshot.ref).then((fileUrl) => {
-                        console.log("fileUrl: ", fileUrl)
-                        setRefSignatureCliente(fileUrl)
-                        setClienteUploaded(true)
-                        setIsLoading(false)
-                        resolve("firma cliente caricata!");
-                    })
-                }
-            )
+            const storageRefCliente = ref(storage, '/files/' + customerSelected.nome_cognome + '/signature.png')
+            if (Platform.OS === "android") {
+                // console.log(<Image source={{ uri: signatureCliente }} />)
+                const base64Code = signatureCliente.split("data:image/png;base64,")[1];
+                const filename = FileSystem.documentDirectory + "signature_cliente_0.png";
+                await FileSystem.writeAsStringAsync(filename, base64Code, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+
+                const mediaResult = await MediaLibrary.createAssetAsync(filename);
+                // console.log(mediaResult.uri)
+                // const imgClienteRaw = <Image source={{ uri: signatureCliente }} width={10} height={10} style={{
+                //     resizeMode: "center",
+                //     height: 10,
+                //     width: 10
+                // }} />
+                // console.log(imgClienteRaw.props.source.uri)
+                const imgCliente = await fetch(mediaResult.uri);
+                const blobCliente = await imgCliente.blob();
+                const uploadTaskCliente = uploadBytesResumable(storageRefCliente, blobCliente)
+                uploadTaskCliente.on("state_changed", (snapshot) => {
+                    // console.log("Uploading...")
+                    // console.log("ph:", ph)
+                }, (error) => {
+                    console.log("error: ", error)
+                    setIsLoading(false)
+                    blobCliente.close();
+                    reject(error);
+                },
+                    () => {
+                        //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
+                        getDownloadURL(uploadTaskCliente.snapshot.ref).then((fileUrl) => {
+                            console.log("fileUrl: ", fileUrl)
+                            setRefSignatureCliente(fileUrl)
+                            setClienteUploaded(true)
+                            setIsLoading(false)
+                            resolve("firma cliente caricata!");
+                        })
+                    }
+                )
+            } else {
+                const imgCliente = await fetch(signatureCliente);
+                const blobCliente = await imgCliente.blob();
+                const uploadTaskCliente = uploadBytesResumable(storageRefCliente, blobCliente)
+                uploadTaskCliente.on("state_changed", (snapshot) => {
+                    // console.log("Uploading...")
+                    // console.log("ph:", ph)
+                }, (error) => {
+                    console.log("error: ", error)
+                    setIsLoading(false)
+                    blobCliente.close();
+                    reject(error);
+                },
+                    () => {
+                        //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
+                        getDownloadURL(uploadTaskCliente.snapshot.ref).then((fileUrl) => {
+                            console.log("fileUrl: ", fileUrl)
+                            setRefSignatureCliente(fileUrl)
+                            setClienteUploaded(true)
+                            setIsLoading(false)
+                            resolve("firma cliente caricata!");
+                        })
+                    }
+                )
+            }
+
         })
     }
 
     const uploadTecnicoSignature = () => {
         setIsLoading(true)
-        console.log("hello2")
         return new Promise(async (resolve, reject) => {
             let ok = await refTecnico.current.readSignature()
-            const imgTecnico = await fetch(signatureTecnico);
-            const blobTecnico = await imgTecnico.blob();
-            const storageRefTecnico = ref(storage, '/files/signature_' + user)
-            const uploadTaskTecnico = uploadBytesResumable(storageRefTecnico, blobTecnico)
-            uploadTaskTecnico.on("state_changed", (snapshot) => {
-                // console.log("Uploading...")
-                // console.log("ph:", ph)
-            }, (error) => {
-                console.log("error: ", error)
-                setIsLoading(false)
-                blobTecnico.close();
-                reject(error);
-            },
-                () => {
-                    //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
-                    getDownloadURL(uploadTaskTecnico.snapshot.ref).then((fileUrl) => {
-                        console.log("fileUrl: ", fileUrl)
-                        setRefSignatureTecnico(fileUrl)
-                        setTecnicoUploaded(true)
-                        setIsLoading(false)
-                        resolve("firma tecnico caricata!");
-                    })
-                }
-            )
+            const storageRefTecnico = ref(storage, '/files/signature_' + user + ".png")
+            if (Platform.OS === "android") {
+                // console.log(<Image source={{ uri: signatureCliente }} />)
+                const base64Code = signatureTecnico.split("data:image/png;base64,")[1];
+                const filename = FileSystem.documentDirectory + "signature_tecnico_0.png";
+                await FileSystem.writeAsStringAsync(filename, base64Code, {
+                    encoding: FileSystem.EncodingType.Base64,
+                });
+
+                const mediaResult = await MediaLibrary.createAssetAsync(filename);
+                console.log(mediaResult.uri)
+                // const imgTecnicoRaw = <Image source={{ uri: signatureTecnico }} width={10} height={10} style={{
+                //     resizeMode: "center",
+                //     height: 10,
+                //     width: 10
+                // }} />
+                const imgTecnico = await fetch(mediaResult.uri);
+                const blobTecnico = await imgTecnico.blob();
+                const uploadTaskTecnico = uploadBytesResumable(storageRefTecnico, blobTecnico)
+                // const uploadTaskTecnico = uploadBytesResumable(storageRefTecnico, blobTecnico)
+                uploadTaskTecnico.on("state_changed", (snapshot) => {
+                    // console.log("Uploading...")
+                    // console.log("ph:", ph)
+                }, (error) => {
+                    console.log("error: ", error)
+                    setIsLoading(false)
+                    blobTecnico.close();
+                    reject(error);
+                },
+                    () => {
+                        //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
+                        getDownloadURL(uploadTaskTecnico.snapshot.ref).then((fileUrl) => {
+                            console.log("fileUrl: ", fileUrl)
+                            setRefSignatureTecnico(fileUrl)
+                            setTecnicoUploaded(true)
+                            setIsLoading(false)
+                            resolve("firma tecnico caricata!");
+                        })
+                    }
+                )
+            } else {
+                const imgTecnico = await fetch(signatureTecnico);
+                const blobTecnico = await imgTecnico.blob();
+                const uploadTaskTecnico = uploadBytesResumable(storageRefTecnico, blobTecnico)
+                // const uploadTaskTecnico = uploadBytesResumable(storageRefTecnico, blobTecnico)
+                uploadTaskTecnico.on("state_changed", (snapshot) => {
+                    // console.log("Uploading...")
+                    // console.log("ph:", ph)
+                }, (error) => {
+                    console.log("error: ", error)
+                    setIsLoading(false)
+                    blobTecnico.close();
+                    reject(error);
+                },
+                    () => {
+                        //when the file is uploaded we want to download it. uploadTask.snapshot.ref is the reference to the pdf
+                        getDownloadURL(uploadTaskTecnico.snapshot.ref).then((fileUrl) => {
+                            console.log("fileUrl: ", fileUrl)
+                            setRefSignatureTecnico(fileUrl)
+                            setTecnicoUploaded(true)
+                            setIsLoading(false)
+                            resolve("firma tecnico caricata!");
+                        })
+                    }
+                )
+            }
         })
     }
 
@@ -202,10 +292,28 @@ export default function Signature(props) {
                     .replace("{firma_tecnico}", refSignatureTecnico)
                     .replace("{cliente}", customerSelected.nome_cognome)
                     .replace("{firma_cliente}", refSignatureCliente)
+                var checkboxesPdf = {}
+                for (let page of formTemplate.form) {
+                    for (let field of page.fields) {
+                        if (field.type === "checkbox") {
+                            for (let opt of field.options) {
+                                checkboxesPdf[opt.id] = field.value === opt.id ? "black" : "white"
+                            }
+                        }
+                    }
+                }
                 for (let page of formTemplate.form) {
                     for (let field of page.fields) {
                         if (field.type !== "checkbox") {
                             html = html.replace("{" + field.name + "}", field.value)
+                        } else {
+                            for (let opt of field.options) {
+                                if (field.options.filter(o => o.id === field.value && field.value !== "").length === 0) {
+                                    html = html.replace("{altro_" + field.name + "_text}", field.value).replace("{altro_" + field.name + "}", "black")
+                                } else {
+                                    html = html.replace("{altro_" + field.name + "_text}", "").replace("{" + opt.id + "}", checkboxesPdf[opt.id])
+                                }
+                            }
                         }
                     }
                 }
@@ -349,38 +457,82 @@ export default function Signature(props) {
                     <Title>Caricamento in corso...</Title>
                     <Title>attendere</Title>
                 </View> : <>
-                    <Text>Cliente</Text>
-                    <SignatureScreen
-                        ref={refCliente}
-                        onOK={handleSignatureCliente}
-                        // androidHardwareAccelerationDisabled={true}
-                        // onClear={handleClear}
-                        descriptionText="Firma cliente"
-                        webStyle={style}
-                        style={{
-                            "position": "absolute",
-                            "left": 0,
-                            "top": 0,
-                            "width": 400,
-                            "height": 150,
-                        }}
-                    />
-                    <Text>Tecnico</Text>
-                    <SignatureScreen
-                        ref={refTecnico}
-                        onOK={handleSignatureTecnico}
-                        // androidHardwareAccelerationDisabled={true}
-                        // onClear={handleClear}
-                        descriptionText="Firma tecnico"
-                        webStyle={style}
-                        style={{
-                            "position": "absolute",
-                            "left": 0,
-                            "top": 0,
-                            "width": 400,
-                            "height": 150,
-                        }}
-                    />
+                    {
+                        Platform.OS === 'android' ? <>
+                            <Text>Cliente</Text>
+                            <SignatureScreen
+                                ref={refCliente}
+                                onOK={handleSignatureCliente}
+                                // androidHardwareAccelerationDisabled={true}
+                                // onClear={handleClear}
+                                descriptionText="Firma cliente"
+                                webStyle={style}
+                                style={{
+                                    "position": "absolute",
+                                    "left": 0,
+                                    "top": 0,
+                                    "width": 400,
+                                    "height": 150,
+                                }}
+                            />
+                            <View style={styles.row}>
+                                <Button onPress={handleClearCliente}>Cancella</Button>
+                            </View>
+                            <Text>Tecnico</Text>
+                            <SignatureScreen
+                                ref={refTecnico}
+                                onOK={handleSignatureTecnico}
+                                // androidHardwareAccelerationDisabled={true}
+                                // onClear={handleClear}
+                                descriptionText="Firma tecnico"
+                                webStyle={style}
+                                style={{
+                                    "position": "absolute",
+                                    "left": 0,
+                                    "top": 0,
+                                    "width": 400,
+                                    "height": 150,
+                                }}
+                            />
+                            <View style={styles.row}>
+                                <Button onPress={handleClearTecnico}>Cancella</Button>
+                            </View>
+                        </> : <>
+                            <Title>Firma cliente</Title>
+                            <SignatureScreen
+                                ref={refCliente}
+                                onOK={handleSignatureCliente}
+                                // androidHardwareAccelerationDisabled={true}
+                                // onClear={handleClear}
+                                webStyle={style}
+                                style={{
+                                    // "position": "absolute",
+                                    "width": 400,
+                                    "height": 180,
+                                }}
+                            />
+                            <View style={styles.row}>
+                                <Button onPress={handleClearCliente}>Cancella</Button>
+                            </View>
+                            <Title>Firma tecnico</Title>
+                            <SignatureScreen
+                                ref={refTecnico}
+                                // opacity={0.99}
+                                onOK={handleSignatureTecnico}
+                                androidHardwareAccelerationDisabled={true}
+                                // onClear={handleClear}
+                                // webStyle={style}
+                                style={{
+                                    // "position": "absolute",
+                                    "width": 400,
+                                    "height": 180,
+                                }}
+                            />
+                            <View style={styles.row}>
+                                <Button onPress={handleClearTecnico}>Cancella</Button>
+                            </View>
+                        </>
+                    }
                 </>
             }
 

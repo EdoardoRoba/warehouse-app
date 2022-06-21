@@ -46,7 +46,7 @@ export default function Review(props) {
     }
 
     const goTo = () => {
-        navigate('Signature', { customerSelected: customerSelected, formTemplate: formTemplate, token: token, user: user });
+        navigate('Signature', { customerSelected: customerSelected, formTemplate: formTemplate, token: token, user: user, allAltro: props.route.params.allAltro });
     }
 
     return (

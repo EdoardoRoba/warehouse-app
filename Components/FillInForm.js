@@ -131,7 +131,7 @@ export default function FillInForm(props) {
                 })
             })
             setFormTemplate(model)
-            navigate('Review', { customerSelected: customerSelected, formTemplate: model, token: token, user: user });
+            navigate('Review', { customerSelected: customerSelected, formTemplate: model, token: token, user: user, allAltro: allAltro });
             console.log("submit!")
         }
     };
