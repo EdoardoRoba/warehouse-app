@@ -168,6 +168,7 @@ export default function ClientCalendar(props) {
     const [showError, setShowError] = React.useState(false);
     const [showCopyboard, setShowCopyboard] = React.useState(false);
     const [visible, setVisible] = React.useState(false);
+    const [openNoteInfo, setOpenNoteInfo] = React.useState(false);
     const [openSopralluogo, setOpenSopralluogo] = React.useState(false);
     const [openInstallazione, setOpenInstallazione] = React.useState(false);
     const [openAssistenza, setOpenAssistenza] = React.useState(false);
@@ -379,13 +380,16 @@ export default function ClientCalendar(props) {
             {
                 customerSelected.nome_cognome === undefined ? null : <View style={{ width: "90%", height: "50%", marginTop: -40, alignItems: 'center' }}>
                     <FlashMessage position="top" style={{ zIndex: 1000 }} />
-                    <Title style={{ marginTop: 50, fontWeight: "bold" }}>{customerSelected.nome_cognome}</Title>
+                    <Title style={{ fontWeight: "bold", zIndex: -1 }}>{customerSelected.nome_cognome}</Title>
                     {
                         !event.start ? null : <Paragraph style={{ marginTop: 10, fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>Inizio:</Text> {event.start.replace("T", " ").replace("Z", " ")}</Paragraph>
                     }
                     {
                         !event.end ? null : <Paragraph style={{ fontSize: 15 }}><Text style={{ fontWeight: "bold" }}>Fine:</Text> {event.end.replace("T", " ").replace("Z", " ")}</Paragraph>
                     }
+                    <Pressable onPress={() => {
+                        setOpenNoteInfo(true)
+                    }}><Icon name={"sticky-note-o"} size={25} style={{ marginTop: 5, marginLeft: 5 }} /></Pressable>
                     <Paragraph style={{ marginTop: 15, fontSize: 20 }}>{customerSelected.company}</Paragraph>
                     <Paragraph style={{ marginTop: 15, fontSize: 20, textDecorationLine: "underline" }} onPress={() => { Linking.openURL(`tel:${customerSelected.telefono}`) }}>{customerSelected.telefono}</Paragraph>
                     <Paragraph onPress={() => {
@@ -1310,6 +1314,41 @@ export default function ClientCalendar(props) {
                                                     }
                                                 </View>
                                             }
+                                        </Pressable>
+                                    </ScrollView>
+                                </SafeAreaView>
+                            </View>
+                        </View>
+                    </View>
+                </Pressable>
+            </Modal>
+
+            <Modal
+                visible={openNoteInfo}
+                onRequestClose={() => setOpenNoteInfo(false)}
+                animationType="slide"
+                transparent={true}>
+                <Pressable style={styles.outsideModal}
+                    onPress={(event) => {
+                        if (event.target == event.currentTarget) {
+                            setOpenNoteInfo(false);
+                        }
+                    }} >
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalHeader}>
+                                <TouchableOpacity style={{ flexGrow: 1 }} onPress={() => setOpenNoteInfo(false)}>
+                                    <Icon name={"close"} size={25} style={styles.modalHeaderCloseText} />
+                                </TouchableOpacity>
+                            </View>
+                            <Title style={styles.modalText}>Note info</Title>
+                            <View>
+                                <SafeAreaView style={{ maxWidth: 300, maxHeight: "90%", alignItems: "center" }}>
+                                    <ScrollView showsVerticalScrollIndicator={false} persistentScrollbar={true} style={styles.scrollView}>
+                                        <Pressable>
+                                            <View style={{ flexDirection: "column" }}>
+                                                <Text>{customerSelected.note_info && customerSelected.note_info.length > 0 ? customerSelected.note_info : "Non sono presenti note sulle info del cliente"}</Text>
+                                            </View>
                                         </Pressable>
                                     </ScrollView>
                                 </SafeAreaView>

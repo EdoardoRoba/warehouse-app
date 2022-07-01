@@ -288,7 +288,7 @@ export default function Signature(props) {
                 html = html.replace("{nome_cognome}", customerSelected.nome_cognome)
                     .replace("{indirizzo}", customerSelected.indirizzo + " - " + customerSelected.comune + " - " + customerSelected.provincia)
                     .replace("{date}", today).replace("{date}", today)
-                    .replace("{tecnico}", user)
+                    .replace("{tecnico}", user).replace("{tecnico}", user).replace("{tecnico}", user)
                     .replace("{firma_tecnico}", refSignatureTecnico)
                     .replace("{cliente}", customerSelected.nome_cognome)
                     .replace("{firma_cliente}", refSignatureCliente)

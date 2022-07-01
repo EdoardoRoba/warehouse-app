@@ -100,11 +100,11 @@ export default function FillInForm(props) {
 
     const onNextStep = (idxSection) => {
         const asArray = Object.entries(tempValues)
-        // let missingValues = asArray.filter(([name, f]) => {
-        //     return (f.value === "" && f.required && f.section.toString() === idxSection.toString())
-        // })
+        let missingValues = asArray.filter(([name, f]) => {
+            return (f.value === "" && f.required && f.section.toString() === idxSection.toString())
+        })
 
-        let missingValues = []
+        // let missingValues = []
         if (missingValues.length > 0) {
             setStopNext(true)
             console.log("error!")
@@ -198,79 +198,88 @@ export default function FillInForm(props) {
 
     return (
 
-        <View style={{ height: 600 }}>
+        <View style={{ height: 550 }}>
 
-            {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
             {
-                !formTemplate || !tempValues ? null : <ProgressSteps>
-                    {
-                        formTemplate.form.map((page, idxSection) => {
-                            return <ProgressStep onNext={() => onNextStep(idxSection)} onPrevious={() => setStopNext(false)} onSubmit={() => {
-                                if (idxSection === formTemplate.form.length - 1) {
-                                    onSubmit(idxSection)
-                                }
-                            }} errors={stopNext}>
+                !formTemplate || !tempValues ? null :
+                    <ProgressSteps>
 
-                                <View style={{ alignItems: 'center' }}>
+                        {
+                            formTemplate.form.map((page, idxSection) => {
 
-                                    <Text style={{ marginBottom: 10 }} >{page.title}</Text>
-                                    {
-                                        page.fields.map((field, idxField) => {
-                                            let req = field.required ? " *" : ""
-                                            if (field.type === "checkbox" && checkboxes) {
-                                                return <View style={{
-                                                    flex: 1,
-                                                    marginTop: 5,
-                                                }}>
-                                                    <Text style={styles.label}>{field.label}</Text>
-                                                    <View style={{
-                                                        flexDirection: "row",
+                                return <ProgressStep onNext={() => onNextStep(idxSection)} onPrevious={() => setStopNext(false)} onSubmit={() => {
+                                    if (idxSection === formTemplate.form.length - 1) {
+                                        onSubmit(idxSection)
+                                    }
+                                }} errors={stopNext}>
+
+                                    {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+                                    <View onPress={Keyboard.dismiss} style={{ alignItems: 'center' }}>
+
+                                        <Text style={{ marginBottom: 10 }} >{page.title}</Text>
+                                        {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+                                        {
+                                            page.fields.map((field, idxField) => {
+                                                let req = field.required ? " *" : ""
+                                                if (field.type === "checkbox" && checkboxes) {
+                                                    return <View style={{
+                                                        flex: 1,
                                                         marginTop: 5,
-                                                    }}>
-                                                        {
-                                                            field.options.map((opt) => {
-                                                                return <View style={{
-                                                                    flexDirection: "row",
-                                                                    marginTop: 5,
-                                                                }}>
-                                                                    <Checkbox
-                                                                        value={checkboxes[field.name].options.filter(o => opt.id === o.id)[0].checked}
-                                                                        onValueChange={(e) => onChangeCheckbox(e, idxSection, idxField, field.name, opt.id)}
-                                                                    />
-                                                                    <Text style={{ color: "black" }}>{opt.title}</Text>
-                                                                </View>
-                                                            })
-                                                        }
+                                                    }} onPress={Keyboard.dismiss}>
+                                                        <Text style={styles.label}>{field.label}</Text>
+                                                        <View style={{
+                                                            flexDirection: "row",
+                                                            marginTop: 5,
+                                                        }}>
+                                                            {
+                                                                field.options.map((opt) => {
+                                                                    return <View style={{
+                                                                        flexDirection: "row",
+                                                                        marginTop: 5,
+                                                                    }}>
+                                                                        <Checkbox
+                                                                            value={checkboxes[field.name].options.filter(o => opt.id === o.id)[0].checked}
+                                                                            onValueChange={(e) => onChangeCheckbox(e, idxSection, idxField, field.name, opt.id)}
+                                                                        />
+                                                                        <Text style={{ color: "black" }}>{opt.title}</Text>
+                                                                    </View>
+                                                                })
+                                                            }
+                                                        </View>
                                                     </View>
-                                                </View>
-                                            } else if (field.type === "multiline") {
-                                                return <TxTInput
-                                                    multiline
-                                                    style={styles.inputMultiline}
-                                                    onChangeText={(e) => onChangeField(e, idxSection, idxField, field.name)}
-                                                    value={tempValues[field.name].value}
-                                                    placeholder={field.label + req}
-                                                    keyboardType={field.type}
-                                                />
-                                            } else {
-                                                return <TextInput
-                                                    style={styles.input}
-                                                    onChangeText={(e) => onChangeField(e, idxSection, idxField, field.name)}
-                                                    value={tempValues[field.name].value}
-                                                    placeholder={field.label + req}
-                                                    keyboardType={field.type}
-                                                />
-                                            }
-                                        })
-                                    }
-                                    {
-                                        (!stopNext) ? null : <Text style={{ width: '90%', marginLeft: 'auto', marginRight: 'auto', marginTop: 30, textAlign: "center", color: "red" }} severity="error">Valorizzare i campi obbligatori.</Text>
-                                    }
-                                </View>
-                            </ProgressStep>
-                        })
-                    }
-                </ProgressSteps>
+                                                } else if (field.type === "multiline") {
+                                                    return <TxTInput
+                                                        multiline
+                                                        onPress={Keyboard.dismiss}
+                                                        style={styles.inputMultiline}
+                                                        onChangeText={(e) => onChangeField(e, idxSection, idxField, field.name)}
+                                                        value={tempValues[field.name].value}
+                                                        placeholder={field.label + req}
+                                                        keyboardType={field.type}
+                                                    />
+                                                } else {
+                                                    return <TextInput
+                                                        onPress={Keyboard.dismiss}
+                                                        style={styles.input}
+                                                        onChangeText={(e) => onChangeField(e, idxSection, idxField, field.name)}
+                                                        value={tempValues[field.name].value}
+                                                        placeholder={field.label + req}
+                                                        keyboardType={field.type}
+                                                    />
+                                                }
+                                            })
+                                        }
+                                        {/* </TouchableWithoutFeedback> */}
+                                        {
+                                            (!stopNext) ? null : <Text style={{ width: '90%', marginLeft: 'auto', marginRight: 'auto', marginTop: 30, textAlign: "center", color: "red" }} severity="error">Valorizzare i campi obbligatori.</Text>
+                                        }
+                                    </View>
+                                    {/* </TouchableWithoutFeedback> */}
+                                </ProgressStep>
+                            })
+                        }
+
+                    </ProgressSteps>
             }
             <Modal
                 visible={showAltro}

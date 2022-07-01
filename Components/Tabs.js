@@ -64,7 +64,7 @@ export default function Tabs({ user, navigation }) {
                 user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Admin" children={() => <Admin user={user} />} />
             } */}
             {
-                user !== "admin" || user === "EXTERNAL" ? null : <Tab.Screen name="Compila PDF" children={() => <HomePdf user={user} />} />
+                user === "EXTERNAL" ? null : <Tab.Screen name="Compila PDF" children={() => <HomePdf user={user} />} />
             }
             {
                 user === "surra" || user === "EXTERNAL" ? null : <Tab.Screen name="QRScanner" children={() => <QRScanner user={user} />} />

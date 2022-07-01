@@ -2,7 +2,7 @@
   "expo": {
     "name": "idroaltech",
     "slug": "idroaltech",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -26,11 +26,11 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.idroaltech.magazzino",
-      "buildNumber": "2.0.6"
+      "buildNumber": "2.0.9"
     },
     "android": {
       "package": "idroaltech.idroaltech",
-      "versionCode": 4,
+      "versionCode": 7,
       "adaptiveIcon": {
         "foregroundImage": "./assets/idroaltech_logo.png",
         "backgroundColor": "#FFFFFF"
