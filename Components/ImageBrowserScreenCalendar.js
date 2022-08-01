@@ -5,8 +5,8 @@ import { ImageBrowser } from 'expo-image-picker-multiple';
 
 export default function ImageBrowserScreenCalendar(props) {
 
-    const compress = Platform.OS === 'android' ? 0.8 : 0.3
-    const resize = Platform.OS === 'android' ? 1 : 0.4
+    const compress = Platform.OS === 'android' ? 0.8 : 0.8
+    const resize = Platform.OS === 'android' ? 1 : 0.5
 
     const getHeaderLoader = () => (
         <ActivityIndicator size='small' color={'#0580FF'} />
